@@ -14,7 +14,7 @@
       "id": 1
     },
     {
-      "name": "test3",
+      "name": "tatti",
       "mobNumber": "0123456789",
       "email": "test@gmail.com",
       "password": "123456",
@@ -26,7 +26,7 @@
       "id": 2
     },
     {
-      "name": "test4",
+      "name": "test3",
       "mobNumber": "0123456789",
       "email": "test@gmail.com",
       "password": "123456",
@@ -36,18 +36,6 @@
       },
       "uploadPhoto": "C:\\fakepath\\InShot_20201115_215613461.jpg",
       "id": 4
-    },
-    {
-      "email": "test123@gmail.com",
-      "address": {
-        "id": 0,
-        "addLine1": "Buffer zone"
-      },
-      "mobNumber": "0123456789",
-      "name": "test234324",
-      "password": "123456",
-      "uploadPhoto": "C:\\fakepath\\InShot_20201115_215613461.jpg",
-      "id": 5
     }
   ]
 }

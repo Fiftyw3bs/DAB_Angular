@@ -2,49 +2,47 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { IUser } from 'src/app/user/model/user';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminService {
+  private user_url = environment.server_url + '/user/';
+  private all_user = environment.server_url + '/user';
 
-  public user_url = environment.server_url + "/user/";
-  public product_url = environment.server_url + "/products/";
+  constructor(private apiService: ApiService) {}
 
-  public all_user = environment.server_url + "/user";
-
-  constructor(private apiService: ApiService) { }
-
-
-  authLogin(user_name, password): Observable<any> {
-    return this.apiService.get(`${environment.server_url}/user?email=${user_name}&password=${password}`);
+  public authLogin(
+    user_name: string,
+    password: string
+  ): Observable<Array<IUser>> {
+    return this.apiService.post(`${environment.server_url}/login`, {
+      email: user_name,
+      password,
+    });
   }
 
-
-  userDashboardData() {
-    return this.apiService.get(this.user_url);
-  }
-  productDashboardData() {
-    return this.apiService.get(this.product_url);
-  }
-  allUser(): Observable<any> {
+  public allUser(): Observable<Array<IUser>> {
     return this.apiService.get(this.all_user);
   }
 
-  addUser(user_dto): Observable<any> {
+  public addUser(user_dto: IUser): Observable<IUser> {
     return this.apiService.post(this.user_url, user_dto);
   }
 
   //get data of individual user
-  singleUser(user_id) {
+  public singleUser(user_id): Observable<IUser> {
     return this.apiService.get(this.user_url + user_id);
   }
+
   //update data of individual user
-  editUser(user_id, user_dto): Observable<any> {
+  public editUser(user_id: number, user_dto: IUser): Observable<IUser> {
     return this.apiService.put(this.user_url + user_id, user_dto);
   }
+
   //Delete individual user
-  deleteUser(user_id) {
+  public deleteUser(user_id: number) {
     return this.apiService.delete(this.user_url + user_id);
   }
 }

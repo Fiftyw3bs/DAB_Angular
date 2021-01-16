@@ -13,8 +13,12 @@ export class AdminService {
 
   public all_user = environment.server_url + "/user";
 
-
   constructor(private apiService: ApiService) { }
+
+
+  authLogin(user_name, password): Observable<any> {
+    return this.apiService.get(`${environment.server_url}/user?email=${user_name}&password=${password}`);
+  }
 
 
   userDashboardData() {

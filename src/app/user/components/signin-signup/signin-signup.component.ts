@@ -2,16 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { LoginSignupService } from 'src/app/services/login-signup.service';
-import { HelperService } from "./../../services/helper.service";
+import { HelperService } from '../../../services/helper.service';
+import { LoginSignupService } from '../../services/login-signup.service';
 
 @Component({
   selector: 'app-signin-signup',
   templateUrl: './signin-signup.component.html',
-  styleUrls: ['./signin-signup.component.scss']
+  styleUrls: ['./signin-signup.component.scss'],
 })
 export class SigninSignupComponent implements OnInit {
-
   regForm: Boolean = false;
   signUpform: FormGroup;
   signInform: FormGroup;
@@ -23,13 +22,19 @@ export class SigninSignupComponent implements OnInit {
 
   signInFormValue: any = {};
 
-  constructor(private helperService: HelperService, private toastr: ToastrService, private formBuilder: FormBuilder, private router: Router, private logsign_service: LoginSignupService) { }
+  constructor(
+    private helperService: HelperService,
+    private toastr: ToastrService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private logsign_service: LoginSignupService
+  ) {}
 
   ngOnInit() {
     this.href = this.router.url;
-    if (this.href == '/sign-up') {
+    if (this.href == '/signup') {
       this.regForm = true;
-    } else if (this.href == '/sign-in') {
+    } else if (this.href == '/login') {
       this.regForm = false;
     }
 
@@ -40,14 +45,14 @@ export class SigninSignupComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       addLine1: ['', Validators.required],
       uploadPhoto: ['', Validators.required],
-    })
+    });
 
-    this.signInform = this.formBuilder.group({
-
-    })
+    this.signInform = this.formBuilder.group({});
   }
 
-  get rf() { return this.signUpform.controls; }
+  get rf() {
+    return this.signUpform.controls;
+  }
 
   onSubmitSignUp() {
     this.signUpsubmitted = true;
@@ -69,34 +74,43 @@ export class SigninSignupComponent implements OnInit {
       name: this.user_reg_data.name,
       password: this.user_reg_data.password,
       uploadPhoto: this.user_reg_data.uploadPhoto,
-    }
-    this.logsign_service.userRegister(this.user_dto).subscribe(data => {
-      this.toastr.success('User Creates successsfully!', 'SUCCESS!');
-      this.router.navigateByUrl('/sign-in');
-    }, err => {
-      this.toastr.error('Some Error Occured!', 'FAILED!');
-
-    })
+    };
+    this.logsign_service.userRegister(this.user_dto).subscribe(
+      (data) => {
+        this.toastr.success('User Creates successsfully!', 'SUCCESS!');
+        this.router.navigateByUrl('/login');
+      },
+      (err) => {
+        this.toastr.error('Some Error Occured!', 'FAILED!');
+      }
+    );
   }
 
   onSubmitSignIn() {
-    this.logsign_service.authLogin(this.signInFormValue.userEmail, this.signInFormValue.userPassword).subscribe(data => {
-      if (data && data.length != 0) {
-        this.user_data = data[0];
+    this.logsign_service
+      .authLogin(
+        this.signInFormValue.userEmail,
+        this.signInFormValue.userPassword
+      )
+      .subscribe(
+        (data) => {
+          if (data && data.length != 0) {
+            this.user_data = data[0];
 
-        sessionStorage.setItem("user_session_id", this.user_data.id);
-        this.toastr.success('Login!', 'SUCCESS!');
-        if (this.user_data.admin) {
-          this.router.navigateByUrl('/admin-dashboard');
+            sessionStorage.setItem('user_session_id', this.user_data.id);
+            this.toastr.success('Login!', 'SUCCESS!');
+            if (this.user_data.admin) {
+              this.router.navigateByUrl('/admin/dashboard');
+              sessionStorage.setItem('admin', 'true');
+            }
+            this.helperService.isLoggedIn.next(true);
+          } else {
+            this.toastr.error('Anthorized!', 'FAILED!');
+          }
+        },
+        (error) => {
+          console.log('My error', error);
         }
-        this.helperService.isLoggedIn.next(true);
-
-      } else {
-        this.toastr.error('Anthorized!', 'FAILED!');
-      }
-    }, error => {
-      console.log("My error", error);
-    })
+      );
   }
-
 }

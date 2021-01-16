@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AdminService } from '../services/admin.service';
+import { AdminService } from '../../services/admin.service';
 declare var jQuery: any;
 
 @Component({

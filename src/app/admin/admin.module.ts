@@ -1,15 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { UserCrudComponent } from './user-crud/user-crud.component';
+
+import { AdminRoutingModule } from './routing/admin-routing.module';
+import { AdminComponent } from './admin.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserCrudComponent } from './components/user-crud/user-crud.component';
+
 
 @NgModule({
-  declarations: [AdminDashboardComponent, UserCrudComponent],
+
+  declarations: [AdminComponent, UserCrudComponent,],
   imports: [
     CommonModule,
+    AdminRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ]
 })
 export class AdminModule { }

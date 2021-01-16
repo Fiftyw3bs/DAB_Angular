@@ -17,7 +17,11 @@ export class BackendHttpInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (request.method === 'POST' && request.url.endsWith('login')) {
+    if (
+      request.url.includes('localhost') &&
+      request.method === 'POST' &&
+      request.url.endsWith('login')
+    ) {
       const body = JSON.parse(request.body);
       const resData = data.user.find(
         ({ password, email }) =>

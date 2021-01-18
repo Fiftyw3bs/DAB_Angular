@@ -38,8 +38,8 @@ export class SigninSignupComponent implements OnInit {
       mobNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      addLine1: ['', Validators.required],
-      uploadPhoto: ['', Validators.required],
+      // addLine1: ['', Validators.required],
+      // uploadPhoto: ['', Validators.required],
     });
     this.signInform = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -59,14 +59,9 @@ export class SigninSignupComponent implements OnInit {
     const value = this.signUpform.value;
     const reqData = {
       email: value.email,
-      address: {
-        id: 0,
-        addLine1: value.addLine1,
-      },
       mobNumber: value.mobNumber,
       name: value.name,
       password: value.password,
-      uploadPhoto: value.uploadPhoto,
     };
     this.logsign_service.userRegister(reqData).subscribe(
       (data) => {
@@ -94,6 +89,9 @@ export class SigninSignupComponent implements OnInit {
           if (user.admin) {
             this.router.navigateByUrl('/admin/dashboard');
             sessionStorage.setItem('admin', 'true');
+          }
+          if (!user.admin) {
+            this.router.navigateByUrl('/profile');
           }
           this.helperService.isLoggedIn.next(true);
         } else {

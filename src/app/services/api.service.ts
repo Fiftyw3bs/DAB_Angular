@@ -39,6 +39,12 @@ export class ApiService {
       .pipe(catchError(this.formatErrors));
   }
 
+  public patch(path: string, body: Object = {}): Observable<any> {
+    return this.http
+      .patch(path, JSON.stringify(body), this.httpOptions)
+      .pipe(catchError(this.formatErrors));
+  }
+
   public delete(path): Observable<any> {
     return this.http.delete(path).pipe(catchError(this.formatErrors));
   }

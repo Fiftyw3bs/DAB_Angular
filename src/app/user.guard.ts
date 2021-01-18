@@ -11,8 +11,9 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class UserGuard implements CanActivate {
   constructor(private router: Router) {}
+
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -21,12 +22,11 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    if (sessionStorage.getItem('admin')) {
+    if (
+      !sessionStorage.getItem('admin') &&
+      sessionStorage.getItem('user_session_id')
+    ) {
       return true;
-    }
-    if (sessionStorage.getItem('user_session_id')) {
-      this.router.navigateByUrl('/dashboard');
-      return false;
     }
     this.router.navigateByUrl('/login');
     return false;

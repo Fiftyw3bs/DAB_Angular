@@ -1,0 +1,33 @@
+<br>
+<div class="row">
+  <div class="col-md-10">
+    <strong>All Product List</strong>
+  </div>
+  <div class="col-md-2">
+  </div>
+</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Image</th>
+      <th scope="col">Description</th>
+      <th scope="col">Cost</th>
+      <th scope="col">Total Number Sold</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product_data of all_product_data; let i= index">
+      <th scope="row">{{i+1}}</th>
+      <td>{{product_data.name}}</td>
+      <td>
+        <img [src]="product_data.uploadPhoto" alt="product image" width="200">
+      </td>
+      <td>{{product_data.description}}</td>
+
+      <td>{{product_data.cost}}</td>
+      <td>{{product_data.total_number_sold}}</td>
+    </tr>
+  </tbody>
+</table>

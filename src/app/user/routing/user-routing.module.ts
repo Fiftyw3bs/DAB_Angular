@@ -1,10 +1,21 @@
+import { UserProfileComponent } from './../components/user-profile/user-profile.component';
+import { UserDashboardComponent } from './../components/user-dashboard/user-dashboard.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { SigninSignupComponent } from '../components/signin-signup/signin-signup.component';
-
-// import { UserComponent } from './user.component';
+import { UserGuard } from 'src/app/user.guard';
+import { ProductsComponent } from '../components/products/products.component';
 
 const routes: Routes = [
+  {
+    path: '',
+    canActivate: [UserGuard],
+    children: [
+      { path: 'dashboard', component: UserDashboardComponent },
+      { path: 'profile', component: UserProfileComponent },
+      { path: 'products', component: ProductsComponent },
+    ],
+  },
   { path: 'login', component: SigninSignupComponent },
   { path: 'signup', component: SigninSignupComponent },
 ];

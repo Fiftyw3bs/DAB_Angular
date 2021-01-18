@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { IUser } from 'src/app/user/model/user';
 import { AdminService } from '../../services/admin.service';
 declare var jQuery: any;
@@ -14,17 +15,17 @@ export class UserCrudComponent implements OnInit {
   private single_user_data: IUser;
   public addEditUserForm: FormGroup;
   private user_dto: IUser;
-  private user_reg_data;
   private edit_user_id: number;
-  public upload_file_name: string;
   public addEditUser = false;
   public add_user: Boolean = false;
   public edit_user: Boolean = false;
   public popup_header: string;
+  public uploadedImage: any;
 
   constructor(
     private formBuilder: FormBuilder,
-    private admin_service: AdminService
+    private admin_service: AdminService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -34,9 +35,21 @@ export class UserCrudComponent implements OnInit {
       mobNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      addLine1: ['', Validators.required],
+      addLine1: [''],
       uploadPhoto: [],
     });
+  }
+
+  public changePhoto(event) {
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = (e) => {
+        console.log('-----', e.target.result);
+        this.uploadedImage = e.target.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
   }
 
   private getAllUser() {
@@ -63,21 +76,21 @@ export class UserCrudComponent implements OnInit {
 
   public addUser() {
     this.addEditUser = true;
+    this.uploadedImage = undefined;
     if (this.addEditUserForm.invalid) {
-      alert('Error!! :-)\n\n' + JSON.stringify(this.addEditUserForm.value));
       return;
     }
-    this.user_reg_data = this.addEditUserForm.value;
+    const formData = this.addEditUserForm.value;
     this.user_dto = {
-      name: this.user_reg_data.name,
-      mobNumber: this.user_reg_data.mobNumber,
-      email: this.user_reg_data.email,
-      password: this.user_reg_data.password,
+      name: formData.name,
+      mobNumber: formData.mobNumber,
+      email: formData.email,
+      password: formData.password,
       address: {
         id: 0,
-        addLine1: this.user_reg_data.addLine1,
+        addLine1: formData.addLine1,
       },
-      uploadPhoto: this.user_reg_data.uploadPhoto,
+      uploadPhoto: this.uploadedImage,
     };
     this.admin_service.addUser(this.user_dto).subscribe(
       (data) => {
@@ -85,13 +98,13 @@ export class UserCrudComponent implements OnInit {
         jQuery('#addEditUserModal').modal('toggle');
       },
       (err) => {
-        alert('Some Error Occured');
+        this.toastr.error('Some Error Occured!', 'FAILED!');
       }
     );
   }
 
   // popup when edit
-  public editUserPopup(user_id) {
+  public editUserPopup(user_id: number) {
     this.edit_user_id = user_id;
     this.edit_user = true;
     this.add_user = false;
@@ -99,57 +112,56 @@ export class UserCrudComponent implements OnInit {
     this.admin_service.singleUser(user_id).subscribe(
       (data: IUser) => {
         this.single_user_data = data;
-        this.upload_file_name = this.single_user_data.uploadPhoto;
+        this.uploadedImage = data.uploadPhoto;
         this.addEditUserForm.setValue({
           name: this.single_user_data.name,
           mobNumber: this.single_user_data.mobNumber,
           email: this.single_user_data.email,
           password: this.single_user_data.password,
-          addLine1: this.single_user_data.address.addLine1,
+          addLine1:
+            (this.single_user_data.address &&
+              this.single_user_data.address.addLine1) ||
+            '',
           uploadPhoto: '',
         });
       },
-      (error) => {
-        console.log('My error', error);
-      }
+      (error) => {}
     );
   }
   public updateUser() {
     if (this.addEditUserForm.invalid) {
       return;
     }
-    this.user_reg_data = this.addEditUserForm.value;
+    const formData = this.addEditUserForm.value;
     this.user_dto = {
-      name: this.user_reg_data.name,
-      mobNumber: this.user_reg_data.mobNumber,
-      email: this.user_reg_data.email,
-      password: this.user_reg_data.password,
+      name: formData.name,
+      mobNumber: formData.mobNumber,
+      email: formData.email,
+      password: formData.password,
       address: {
         id: 0,
-        addLine1: this.user_reg_data.addLine1,
+        addLine1: formData.addLine1,
       },
-      uploadPhoto:
-        this.user_reg_data.uploadPhoto == ''
-          ? this.upload_file_name
-          : this.user_reg_data.uploadPhoto,
+      uploadPhoto: this.uploadedImage,
     };
     this.admin_service.editUser(this.edit_user_id, this.user_dto).subscribe(
       (data) => {
+        this.uploadedImage = undefined;
         this.getAllUser();
         jQuery('#addEditUserModal').modal('toggle');
       },
       (err) => {
-        alert('Some Error Occured');
+        this.toastr.error('Some Error Occured!', 'FAILED!');
       }
     );
   }
-  public deleteUser(user_id) {
+  public deleteUser(user_id: number) {
     this.admin_service.deleteUser(user_id).subscribe(
       (data) => {
         this.getAllUser();
       },
       (err) => {
-        alert('Some Error Occured');
+        this.toastr.error('Some Error Occured!', 'FAILED!');
       }
     );
   }

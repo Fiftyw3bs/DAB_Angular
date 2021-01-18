@@ -8,8 +8,8 @@ import { HelperService } from './../../services/helper.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  public logged_in: Boolean = false;
-  public user_role: String;
+  public logged_in: boolean;
+  public isUser: boolean;
 
   constructor(private router: Router, private helperService: HelperService) {
     this.helperService.isLoggedIn.subscribe((res) => {
@@ -18,10 +18,16 @@ export class HeaderComponent {
   }
 
   ngDoCheck() {
-    this.user_role = sessionStorage.getItem('role');
     const user_session_id = sessionStorage.getItem('user_session_id');
     if (user_session_id) {
       this.logged_in = true;
+    } else {
+      this.logged_in = false;
+    }
+    if (!sessionStorage.getItem('admin')) {
+      this.isUser = true;
+    } else {
+      this.isUser = false;
     }
   }
 

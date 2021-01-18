@@ -97,10 +97,8 @@
 
               <div class="form-group">
                 <label for="exampleFormControlFile1">Upload User Photo</label>
-                <span *ngIf="edit_user"><span>Uplload image</span><br>{{upload_file_name}} <span> <a
-                      href="">Preview</a></span></span>
-                <input type="file" class="form-control-file" formControlName="uploadPhoto"
-                  [ngClass]="{'is-invalid':addEditUser && rf.uploadPhoto.errors}">
+                <input type="file" class="form-control-file" (change)="changePhoto($event)"
+                  formControlName="uploadPhoto" [ngClass]="{'is-invalid':addEditUser && rf.uploadPhoto.errors}">
                 <div *ngIf="addEditUser && rf.uploadPhoto.errors" class="invalid-feedback">
                   <div *ngIf="rf.uploadPhoto.errors.required">Please upload file</div>
                 </div>

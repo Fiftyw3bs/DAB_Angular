@@ -24,7 +24,15 @@ export class LoginSignupService {
     });
   }
 
+  public getUser(id: string): Observable<IUser> {
+    return this.apiService.get(`${this.login_url}/user/${id}`);
+  }
+
   public userRegister(user_dto: IUser): Observable<Array<IUser>> {
     return this.apiService.post(this.reg_url + '/user', user_dto);
+  }
+
+  public updateUser(id: string, user_dto: IUser): Observable<Array<IUser>> {
+    return this.apiService.patch(this.reg_url + '/user/' + id, user_dto);
   }
 }

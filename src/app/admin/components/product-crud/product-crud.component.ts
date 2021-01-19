@@ -18,7 +18,7 @@ export class ProductCrudComponent implements OnInit {
   public add_product: boolean;
   public edit_product: boolean;
   public uploadedImage: any;
-  public uploadedImageName: any;
+  public uploadedImageName: string;
   private single_product_data: IProduct;
   constructor(
     private formBuilder: FormBuilder,

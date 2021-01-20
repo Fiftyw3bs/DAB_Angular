@@ -1,10 +1,10 @@
+import { UserService } from './../../../admin/services/user.service';
 import { IUser } from 'src/app/user/model/user';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from 'src/app/services/helper.service';
-import { LoginSignupService } from '../../services/login-signup.service';
 
 @Component({
   selector: 'app-signin-signup',
@@ -23,7 +23,7 @@ export class SigninSignupComponent implements OnInit {
     private toastr: ToastrService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private logsign_service: LoginSignupService
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -63,10 +63,10 @@ export class SigninSignupComponent implements OnInit {
       name: value.name,
       password: value.password,
     };
-    this.logsign_service.userRegister(reqData).subscribe(
+    this.userService.addUser(reqData).subscribe(
       (data) => {
         this.toastr.success('User Creates successsfully!', 'SUCCESS!');
-        this.router.navigateByUrl('/login');
+        this.router.navigate(['/login']);
       },
       (err) => {
         this.toastr.error('Some Error Occured!', 'FAILED!');
@@ -80,18 +80,18 @@ export class SigninSignupComponent implements OnInit {
       return;
     }
     const value = this.signInform.value;
-    this.logsign_service.authLogin(value.email, value.password).subscribe(
+    this.userService.authLogin(value.email, value.password).subscribe(
       (data: Array<IUser>) => {
         if (data && data.length !== 0) {
           const user = data[0];
           sessionStorage.setItem('user_session_id', user.id);
           this.toastr.success('Login!', 'SUCCESS!');
           if (user.admin) {
-            this.router.navigateByUrl('/admin/dashboard');
+            this.router.navigate(['/admin/dashboard']);
             sessionStorage.setItem('admin', 'true');
           }
           if (!user.admin) {
-            this.router.navigateByUrl('/profile');
+            this.router.navigate(['/profile']);
           }
           this.helperService.isLoggedIn.next(true);
         } else {

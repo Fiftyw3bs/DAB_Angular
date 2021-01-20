@@ -5,7 +5,6 @@ import { UserComponent } from './user.component';
 import { SigninSignupComponent } from './components/signin-signup/signin-signup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { UserDashboardComponent } from './components/user-dashboard/user-dashboard.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ProductsComponent } from './components/products/products.component';
 
@@ -13,7 +12,6 @@ import { ProductsComponent } from './components/products/products.component';
   declarations: [
     UserComponent,
     SigninSignupComponent,
-    UserDashboardComponent,
     UserProfileComponent,
     ProductsComponent,
   ],

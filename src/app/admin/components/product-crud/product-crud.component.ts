@@ -1,8 +1,8 @@
+import { ProductService } from './../../services/product.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IProduct } from '../../models/product';
-import { AdminService } from '../../services/admin.service';
 declare var jQuery: any;
 
 @Component({
@@ -22,7 +22,7 @@ export class ProductCrudComponent implements OnInit {
   private single_product_data: IProduct;
   constructor(
     private formBuilder: FormBuilder,
-    private adminService: AdminService,
+    private productService: ProductService,
     private toastr: ToastrService
   ) {}
 
@@ -53,7 +53,7 @@ export class ProductCrudComponent implements OnInit {
   }
 
   private getAllProduct() {
-    this.adminService.getAdminallProduct().subscribe(
+    this.productService.getAllProducts().subscribe(
       (data: Array<IProduct>) => {
         this.all_product_data = data;
       },
@@ -85,7 +85,7 @@ export class ProductCrudComponent implements OnInit {
       cost: value.cost,
       total_number_sold: value.total_number_sold,
     };
-    this.adminService.addNewProduct(reqData).subscribe(
+    this.productService.addNewProduct(reqData).subscribe(
       (data) => {
         this.uploadedImage = undefined;
         this.uploadedImageName = undefined;
@@ -103,7 +103,7 @@ export class ProductCrudComponent implements OnInit {
     this.edit_product = true;
     this.popup_header = 'Edit Product';
     this.addEditProductForm.reset();
-    this.adminService.singleProduct(id).subscribe((data: IProduct) => {
+    this.productService.singleProduct(id).subscribe((data: IProduct) => {
       this.single_product_data = data;
       this.uploadedImage = data.uploadPhoto;
       this.addEditProductForm.setValue({
@@ -130,7 +130,7 @@ export class ProductCrudComponent implements OnInit {
       cost: value.cost,
       total_number_sold: value.total_number_sold,
     };
-    this.adminService
+    this.productService
       .updateProduct(this.single_product_data.id, reqData)
       .subscribe(
         (data: Array<IProduct>) => {
@@ -149,7 +149,7 @@ export class ProductCrudComponent implements OnInit {
   public deleteProduct(id: string) {
     let r = confirm('Do you want to delete the product ID: ' + id + '?');
     if (r === true) {
-      this.adminService.deleteProduct(id).subscribe(
+      this.productService.deleteProduct(id).subscribe(
         (data) => {
           console.log('deleted successfully', data);
           this.getAllProduct();

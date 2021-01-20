@@ -1,7 +1,7 @@
+import { ProductService } from './../../../admin/services/product.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IProduct } from 'src/app/admin/models/product';
-import { AdminService } from 'src/app/admin/services/admin.service';
 
 @Component({
   selector: 'app-products',
@@ -11,13 +11,16 @@ import { AdminService } from 'src/app/admin/services/admin.service';
 export class ProductsComponent implements OnInit {
   public all_product_data: Array<IProduct>;
 
-  constructor(private router: Router, private product_service: AdminService) {}
+  constructor(
+    private router: Router,
+    private product_service: ProductService
+  ) {}
   ngOnInit() {
     this.getAllProduct();
   }
 
   private getAllProduct() {
-    this.product_service.getAdminallProduct().subscribe(
+    this.product_service.getAllProducts().subscribe(
       (data: Array<IProduct>) => {
         this.all_product_data = data;
       },

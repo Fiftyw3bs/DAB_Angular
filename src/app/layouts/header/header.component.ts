@@ -34,6 +34,6 @@ export class HeaderComponent {
   public logOut() {
     sessionStorage.clear();
     this.helperService.isLoggedIn.next(false);
-    this.router.navigateByUrl('/login');
+    this.router.navigate(['/login']);
   }
 }

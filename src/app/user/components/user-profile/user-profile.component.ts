@@ -1,10 +1,8 @@
+import { UserService } from './../../../admin/services/user.service';
 import { IUser } from './../../model/user.d';
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { HelperService } from 'src/app/services/helper.service';
-import { LoginSignupService } from '../../services/login-signup.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -26,12 +24,13 @@ export class UserProfileComponent implements OnInit {
   constructor(
     private toastr: ToastrService,
     private formBuilder: FormBuilder,
-    private logsign_service: LoginSignupService
+    private userService: UserService,
+    private userSerice: UserService
   ) {}
 
   ngOnInit(): void {
     const id = sessionStorage.getItem('user_session_id');
-    this.logsign_service.getUser(id).subscribe((res: IUser) => {
+    this.userService.singleUser(id).subscribe((res: IUser) => {
       if (res) {
         setTimeout(() => {
           this.uploadedImage = res.uploadPhoto;
@@ -77,7 +76,7 @@ export class UserProfileComponent implements OnInit {
       name: value.name,
       uploadPhoto: this.uploadedImage,
     };
-    this.logsign_service.updateUser(this.user.id, reqData).subscribe(
+    this.userSerice.editUser(this.user.id, reqData).subscribe(
       (data) => {
         this.toastr.success('User Updated successsfully!', 'SUCCESS!');
       },

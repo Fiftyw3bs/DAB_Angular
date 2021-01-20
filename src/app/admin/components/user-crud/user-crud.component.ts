@@ -1,8 +1,8 @@
+import { UserService } from './../../services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IUser } from 'src/app/user/model/user';
-import { AdminService } from '../../services/admin.service';
 declare var jQuery: any;
 
 @Component({
@@ -15,7 +15,7 @@ export class UserCrudComponent implements OnInit {
   private single_user_data: IUser;
   public addEditUserForm: FormGroup;
   private user_dto: IUser;
-  private edit_user_id: number;
+  private edit_user_id: string;
   public addEditUser = false;
   public add_user: Boolean = false;
   public edit_user: Boolean = false;
@@ -24,7 +24,7 @@ export class UserCrudComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private admin_service: AdminService,
+    private user_service: UserService,
     private toastr: ToastrService
   ) {}
 
@@ -53,7 +53,7 @@ export class UserCrudComponent implements OnInit {
   }
 
   private getAllUser() {
-    this.admin_service.allUser().subscribe(
+    this.user_service.allUser().subscribe(
       (data: Array<IUser>) => {
         this.all_user_data = data;
       },
@@ -72,11 +72,12 @@ export class UserCrudComponent implements OnInit {
     this.add_user = true;
     this.popup_header = 'Add New User';
     this.addEditUserForm.reset();
+    this.uploadedImage = undefined;
   }
 
   public addUser() {
     this.addEditUser = true;
-    this.uploadedImage = undefined;
+    // this.uploadedImage = undefined;
     if (this.addEditUserForm.invalid) {
       return;
     }
@@ -92,7 +93,7 @@ export class UserCrudComponent implements OnInit {
       },
       uploadPhoto: this.uploadedImage,
     };
-    this.admin_service.addUser(this.user_dto).subscribe(
+    this.user_service.addUser(this.user_dto).subscribe(
       (data) => {
         this.getAllUser();
         jQuery('#addEditUserModal').modal('toggle');
@@ -104,12 +105,12 @@ export class UserCrudComponent implements OnInit {
   }
 
   // popup when edit
-  public editUserPopup(user_id: number) {
+  public editUserPopup(user_id: string) {
     this.edit_user_id = user_id;
     this.edit_user = true;
     this.add_user = false;
     this.popup_header = 'Edit User';
-    this.admin_service.singleUser(user_id).subscribe(
+    this.user_service.singleUser(user_id).subscribe(
       (data: IUser) => {
         this.single_user_data = data;
         this.uploadedImage = data.uploadPhoto;
@@ -144,7 +145,7 @@ export class UserCrudComponent implements OnInit {
       },
       uploadPhoto: this.uploadedImage,
     };
-    this.admin_service.editUser(this.edit_user_id, this.user_dto).subscribe(
+    this.user_service.editUser(this.edit_user_id, this.user_dto).subscribe(
       (data) => {
         this.uploadedImage = undefined;
         this.getAllUser();
@@ -155,8 +156,8 @@ export class UserCrudComponent implements OnInit {
       }
     );
   }
-  public deleteUser(user_id: number) {
-    this.admin_service.deleteUser(user_id).subscribe(
+  public deleteUser(user_id: string) {
+    this.user_service.deleteUser(user_id).subscribe(
       (data) => {
         this.getAllUser();
       },

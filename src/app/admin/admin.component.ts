@@ -1,7 +1,8 @@
+import { UserService } from './services/user.service';
+import { ProductService } from './services/product.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IProduct } from './models/product';
-import { AdminService } from './services/admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -12,7 +13,11 @@ export class AdminComponent implements OnInit {
   public total_user: number = 0;
   public total_product: number = 0;
 
-  constructor(private router: Router, private adminService: AdminService) {}
+  constructor(
+    private router: Router,
+    private productService: ProductService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.adminUserDashboardData();
@@ -20,15 +25,15 @@ export class AdminComponent implements OnInit {
   }
 
   public userDashboard() {
-    this.router.navigateByUrl('/admin/users');
+    this.router.navigate(['/admin/users']);
   }
 
   public productDashboard() {
-    this.router.navigateByUrl('/admin/products');
+    this.router.navigate(['/admin/products']);
   }
 
   private adminUserDashboardData() {
-    this.adminService.allUser().subscribe(
+    this.userService.allUser().subscribe(
       (data) => {
         this.total_user = data.length;
       },
@@ -39,7 +44,7 @@ export class AdminComponent implements OnInit {
   }
 
   private getAllProduct() {
-    this.adminService.getAdminallProduct().subscribe(
+    this.productService.getAllProducts().subscribe(
       (data: Array<IProduct>) => {
         this.total_product = data.length;
       },

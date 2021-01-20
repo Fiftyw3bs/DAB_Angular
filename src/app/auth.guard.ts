@@ -25,10 +25,10 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     if (sessionStorage.getItem('user_session_id')) {
-      this.router.navigateByUrl('/profile');
+      this.router.navigate(['/profile']);
       return false;
     }
-    this.router.navigateByUrl('/login');
+    this.router.navigate(['/login']);
     return false;
   }
 }

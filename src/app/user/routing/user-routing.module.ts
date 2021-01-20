@@ -1,5 +1,4 @@
 import { UserProfileComponent } from './../components/user-profile/user-profile.component';
-import { UserDashboardComponent } from './../components/user-dashboard/user-dashboard.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { SigninSignupComponent } from '../components/signin-signup/signin-signup.component';
@@ -11,7 +10,7 @@ const routes: Routes = [
     path: '',
     canActivate: [UserGuard],
     children: [
-      { path: 'dashboard', component: UserDashboardComponent },
+      // { path: 'dashboard', component: UserDashboardComponent },
       { path: 'profile', component: UserProfileComponent },
       { path: 'products', component: ProductsComponent },
     ],

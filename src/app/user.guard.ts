@@ -24,7 +24,7 @@ export class UserGuard implements CanActivate {
     | UrlTree {
     if (
       !sessionStorage.getItem('admin') &&
-      sessionStorage.getItem('user_session_id')
+      sessionStorage.getItem('user_session')
     ) {
       return true;
     }

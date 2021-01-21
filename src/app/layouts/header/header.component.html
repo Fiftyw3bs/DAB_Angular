@@ -22,15 +22,16 @@
       <li *ngIf="isUser" class="nav-item">
         <a class="nav-link sim-pointer cursor" routerLink="/profile">Profile</a>
       </li>
-      <!-- <li *ngIf="isUser" class="nav-item">
-        <a class="nav-link sim-pointer cursor" routerLink="/dashboard">Dashboard</a>
-      </li> -->
+
       <li *ngIf="isUser" class="nav-item">
-        <a class="nav-link sim-pointer cursor" routerLink="/products">Market</a>
+        <a class="nav-link sim-pointer cursor" routerLink="/market">Market</a>
       </li>
 
       <li *ngIf="!isUser" class="nav-item">
         <a class="nav-link sim-pointer cursor" routerLink="/admin/dashboard">Dashboard</a>
+      </li>
+      <li *ngIf="!isUser" class="nav-item">
+        <a class="nav-link sim-pointer cursor" routerLink="/admin/orders">Orders</a>
       </li>
 
 

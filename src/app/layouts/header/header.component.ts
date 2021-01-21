@@ -13,14 +13,15 @@ export class HeaderComponent {
 
   constructor(private router: Router, private helperService: HelperService) {
     this.helperService.isLoggedIn.subscribe((res) => {
-      this.logged_in = res;
+      this.logged_in = !!res;
     });
   }
 
   ngDoCheck() {
-    const user_session_id = sessionStorage.getItem('user_session_id');
-    if (user_session_id) {
+    const user_session = sessionStorage.getItem('user_session');
+    if (user_session) {
       this.logged_in = true;
+      this.helperService.isLoggedIn.next(JSON.parse(user_session));
     } else {
       this.logged_in = false;
     }
@@ -33,7 +34,7 @@ export class HeaderComponent {
 
   public logOut() {
     sessionStorage.clear();
-    this.helperService.isLoggedIn.next(false);
+    this.helperService.isLoggedIn.next(undefined);
     this.router.navigate(['/login']);
   }
 }

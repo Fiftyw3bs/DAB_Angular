@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { SigninSignupComponent } from '../components/signin-signup/signin-signup.component';
 import { UserGuard } from 'src/app/user.guard';
 import { ProductsComponent } from '../components/products/products.component';
+import { OrdersComponent } from '../components/orders/orders.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,7 @@ const routes: Routes = [
     children: [
       // { path: 'dashboard', component: UserDashboardComponent },
       { path: 'profile', component: UserProfileComponent },
-      { path: 'products', component: ProductsComponent },
+      { path: 'market', component: OrdersComponent },
     ],
   },
   { path: 'login', component: SigninSignupComponent },

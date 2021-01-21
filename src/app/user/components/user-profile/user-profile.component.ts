@@ -29,8 +29,8 @@ export class UserProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = sessionStorage.getItem('user_session_id');
-    this.userService.singleUser(id).subscribe((res: IUser) => {
+    const user = JSON.parse(sessionStorage.getItem('user_session'));
+    this.userService.singleUser(user.id).subscribe((res: IUser) => {
       if (res) {
         setTimeout(() => {
           this.uploadedImage = res.uploadPhoto;
@@ -39,7 +39,7 @@ export class UserProfileComponent implements OnInit {
             name: this.user.name,
             mobNumber: this.user.mobNumber,
             email: this.user.email,
-            addLine1: this.user.address.addLine1,
+            addLine1: (this.user.address && this.user.address.addLine1) || '',
             uploadPhoto: '',
           });
           this.formGroup.get('email').disable();

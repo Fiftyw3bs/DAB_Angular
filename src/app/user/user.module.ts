@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ProductsComponent } from './components/products/products.component';
+import { OrdersComponent } from './components/orders/orders.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { ProductsComponent } from './components/products/products.component';
     SigninSignupComponent,
     UserProfileComponent,
     ProductsComponent,
+    OrdersComponent,
   ],
   imports: [UserRoutingModule, CommonModule, FormsModule, ReactiveFormsModule],
 })

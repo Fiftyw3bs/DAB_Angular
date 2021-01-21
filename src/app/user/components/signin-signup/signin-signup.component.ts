@@ -84,7 +84,7 @@ export class SigninSignupComponent implements OnInit {
       (data: Array<IUser>) => {
         if (data && data.length !== 0) {
           const user = data[0];
-          sessionStorage.setItem('user_session_id', user.id);
+          sessionStorage.setItem('user_session', JSON.stringify(user));
           this.toastr.success('Login!', 'SUCCESS!');
           if (user.admin) {
             this.router.navigate(['/admin/dashboard']);
@@ -93,7 +93,7 @@ export class SigninSignupComponent implements OnInit {
           if (!user.admin) {
             this.router.navigate(['/profile']);
           }
-          this.helperService.isLoggedIn.next(true);
+          this.helperService.isLoggedIn.next(user);
         } else {
           this.toastr.error('Anthorized!', 'FAILED!');
         }

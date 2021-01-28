@@ -137,10 +137,10 @@ export class OrdersComponent implements OnInit {
     }
     const value = this.addEditOrderForm.value;
     const reqData: any = {
-      product: value.product,
-      quantity: value.product,
+      product: JSON.parse(value.product),
+      quantity: value.quantity,
     };
-    Object.assign(this.single_order_data.dateCreated, reqData);
+    Object.assign(this.single_order_data, reqData);
     this.orderService
       .updateOrder(this.single_order_data.id, this.single_order_data)
       .subscribe(

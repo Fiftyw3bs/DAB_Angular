@@ -1,6 +1,6 @@
 {
     "/api/*": {
-        "target": "https://wallet.dagribiz.farm",
+        "target": "https://testnets.dagribiz.farm",
         "secure": false,
         "logLevel": "debug"
     },

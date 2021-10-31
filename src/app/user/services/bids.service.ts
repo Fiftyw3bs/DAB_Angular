@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class BidsService {
-  public bid_url = environment.server_url + '/bids/';
+  public bid_url = environment.db_url + '/bids/';
 
   constructor(private apiService: ApiService) {}
 

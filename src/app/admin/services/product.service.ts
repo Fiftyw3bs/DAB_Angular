@@ -8,7 +8,7 @@ import { IProduct } from '../models/product';
   providedIn: 'root',
 })
 export class ProductService {
-  public product_url = environment.server_url + '/products/';
+  public product_url = environment.db_url + '/products/';
 
   constructor(private apiService: ApiService) {}
 

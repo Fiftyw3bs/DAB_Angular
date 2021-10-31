@@ -8,8 +8,8 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class UserService {
-  private user_url = environment.server_url + '/user/';
-  private all_user = environment.server_url + '/user';
+  private user_url = environment.db_url + '/user/';
+  private all_user = environment.db_url + '/user';
 
   constructor(private apiService: ApiService) {}
 

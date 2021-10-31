@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class OrdersService {
-  public order_url = environment.server_url + '/orders/';
+  public order_url = environment.db_url + '/orders/';
 
   constructor(private apiService: ApiService) {}
 

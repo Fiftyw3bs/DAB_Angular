@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   // server_url:
   //   'https://my-json-server.typicode.com/aqeelBahoo/oluwafemi-ecommerce',
-  server_url: 'http://localhost:3000',
+  server_url: 'http://dagribiz.farm:3000',
   contract_url: 'https://testnets.dagribiz.farm',
 };
 

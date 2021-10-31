@@ -1,0 +1,12 @@
+{
+    "/api/*": {
+        "target": "https://wallet.dagribiz.farm",
+        "secure": false,
+        "logLevel": "debug"
+    },
+    "/wallet/*": {
+        "target": "https://wallet.dagribiz.farm",
+        "secure": false,
+        "logLevel": "debug"
+    }
+}

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from 'src/app/services/helper.service';
+import { ContractsService } from '../../services/contract.service';
 
 @Component({
   selector: 'app-signin-signup',
@@ -23,7 +24,8 @@ export class SigninSignupComponent implements OnInit {
     private toastr: ToastrService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private contractService: ContractsService,
   ) {}
 
   ngOnInit() {
@@ -53,16 +55,23 @@ export class SigninSignupComponent implements OnInit {
 
   public onSubmitSignUp() {
     this.signUpsubmitted = true;
+    var reqData: any;
     if (this.signUpform.invalid) {
       return;
     }
     const value = this.signUpform.value;
-    const reqData = {
-      email: value.email,
-      mobNumber: value.mobNumber,
-      name: value.name,
-      password: value.password,
-    };
+    this.contractService.gen_wallet("").subscribe(
+      (wallet) => {
+        reqData = {
+          email: value.email,
+          mobNumber: value.mobNumber,
+          name: value.name,
+          password: value.password,
+          wallet: wallet
+        };
+      }
+    );
+
     this.userService.addUser(reqData).subscribe(
       (data) => {
         this.toastr.success('User Creates successsfully!', 'SUCCESS!');

@@ -1,3 +1,5 @@
+import { IWallet } from "./wallet";
+
 export interface IUser {
   id?: string;
   name: string;
@@ -10,4 +12,5 @@ export interface IUser {
     addLine1: string;
   };
   uploadPhoto?: string;
+  wallet?: IWallet;
 }

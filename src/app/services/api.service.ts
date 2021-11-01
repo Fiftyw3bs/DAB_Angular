@@ -12,6 +12,8 @@ export class ApiService {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
+      "Access-Control-Allow-Headers": "X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
     }),
   };
   constructor(private http: HttpClient) {}

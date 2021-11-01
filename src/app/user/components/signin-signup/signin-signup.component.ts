@@ -69,18 +69,21 @@ export class SigninSignupComponent implements OnInit {
           password: value.password,
           wallet: wallet
         };
+        this.userService.addUser(reqData).subscribe(
+          (data) => {
+            this.toastr.success('User Creates successsfully!', 'SUCCESS!');
+            this.router.navigate(['/login']);
+          },
+          (err) => {
+            this.toastr.error('Some Error Occured!', 'FAILED!');
+          }
+        );
+      },
+      (err) => {
+        this.toastr.error('Some Error Occured!', err);
       }
     );
 
-    this.userService.addUser(reqData).subscribe(
-      (data) => {
-        this.toastr.success('User Creates successsfully!', 'SUCCESS!');
-        this.router.navigate(['/login']);
-      },
-      (err) => {
-        this.toastr.error('Some Error Occured!', 'FAILED!');
-      }
-    );
   }
 
   public onSubmitSignIn() {

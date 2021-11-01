@@ -1,7 +1,7 @@
 import { UserService } from './../../../admin/services/user.service';
 import { IUser } from 'src/app/user/model/user';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ControlContainer, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from 'src/app/services/helper.service';
@@ -62,6 +62,7 @@ export class SigninSignupComponent implements OnInit {
     const value = this.signUpform.value;
     this.contractService.gen_wallet("").subscribe(
       (wallet) => {
+        console.log(wallet)
         reqData = {
           email: value.email,
           mobNumber: value.mobNumber,
@@ -69,6 +70,7 @@ export class SigninSignupComponent implements OnInit {
           password: value.password,
           wallet: wallet
         };
+        console.log(reqData)
         this.userService.addUser(reqData).subscribe(
           (data) => {
             this.toastr.success('User Creates successsfully!', 'SUCCESS!');

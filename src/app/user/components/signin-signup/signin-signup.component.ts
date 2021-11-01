@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from 'src/app/services/helper.service';
 import { ContractsService } from '../../services/contract.service';
+import { IWallet } from '../../model/wallet';
 
 @Component({
   selector: 'app-signin-signup',
@@ -62,13 +63,16 @@ export class SigninSignupComponent implements OnInit {
     const value = this.signUpform.value;
     this.contractService.gen_wallet("").subscribe(
       (wallet) => {
-        console.log(wallet)
+        var w: IWallet;
+        w.id = wallet["wiWallet"]["getWalletId"];
+        w.pubkeyhash = wallet["wiPubKeyHash"]["getPubKeyHash"];
+        w.pubkey = wallet["wiPubKey"]["getPubKey"];
         reqData = {
           email: value.email,
           mobNumber: value.mobNumber,
           name: value.name,
           password: value.password,
-          wallet: wallet
+          wallet: w
         };
         console.log(reqData)
         this.userService.addUser(reqData).subscribe(

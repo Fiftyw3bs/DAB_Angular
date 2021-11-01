@@ -1,9 +1,12 @@
 {
     "/wallet/*": {
-        "target": "https://testnets.dagribiz.farm/",
-        "secure": false,
-        "logLevel": "debug"
-    },
+        "target": "https://testnets.dagribiz.farm/wallet",
+        "secure": true,
+        "changeOrigin": true,
+        "pathRewrite": {
+          "^/api": ""
+        }
+      },
     "/api": {
         "target": "https://testnets.dagribiz.farm/api",
         "secure": true,

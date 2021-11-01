@@ -8,7 +8,7 @@ export const environment = {
   //   'https://my-json-server.typicode.com/aqeelBahoo/oluwafemi-ecommerce',
   server_url: 'https://dagribiz.farm',
   db_url: 'https://db.dagribiz.farm',
-  contract_url: 'https://testnets.dagribiz.farm',
+  contract_url: 'https://dagribiz.farm',
 };
 
 /*

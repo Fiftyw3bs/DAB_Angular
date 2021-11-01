@@ -16,39 +16,24 @@ export class ContractsService {
   constructor(private apiService: ApiService) {}
 
   public createInstance(contract: string, wallet_id: number): Observable<IContract> {
-    var ret: Observable<IContract>;
-
     var pay_load = { "caID": contract
                   , "caWallet": { "getWallet": wallet_id }
                   }
+    return this.apiService.post(this.contract_url + "activate", pay_load)
+  }
 
-    this.apiService.post(this.contract_url + "activate", pay_load).subscribe(
-      retVal => {
-        var contract_: IContract;
-        contract_.instance_id = retVal["unContractInstanceId"];
-        contract_.name = contract;
-        contract_.wallet = wallet_id;
-
-        ret = new Observable(subscriber => {
-          subscriber.next(contract_);
-          setTimeout(() => {
-            subscriber.next(contract_); // happens asynchronously
-          }, 1000);
-        });
-      }
-    );
-
-    return ret;
+  public getAllInstances(wallet_id: number): Observable<Array<IContract>> {
+    return this.apiService.get(this.contract_url + "instances/wallet/" + wallet_id)
   }
 
   public gen_wallet(wallet_data: any): Observable<IWallet> {
-    const wall = this.apiService.post(this.wallet_url, wallet_data);
-    return wall;
+    return this.apiService.post(this.wallet_url, wallet_data);
   }
 
   public status(contract: IContract): Observable<JSON> {
     return this.apiService.get(this.contract_url + 'instance/' + contract.instance_id + "/status")
   }
+
   public get_thread_token(contract: IContract): Observable<IToken> {
     var ret: Observable<IToken>;
 

@@ -1,4 +1,3 @@
-import { ContractService } from '../../../admin/services/contract.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IContract } from 'src/app/user/model/contract';
@@ -11,7 +10,7 @@ import { IWallet } from '../../model/wallet';
   styleUrls: ['./contracts.component.scss'],
 })
 export class ContractsComponent implements OnInit {
-  public all_contract_data: IContract;
+  public all_contract_data: Array<IContract>;
 
   constructor(
     private router: Router,
@@ -23,7 +22,7 @@ export class ContractsComponent implements OnInit {
   public getOrderContract(wallet: IWallet) {
     this.contract_service.createInstance("Order", wallet.id).subscribe(
       (data: IContract) => {
-        this.all_contract_data = data;
+        this.all_contract_data.push(data);
       },
       (error) => {
         console.log('My error', error);
@@ -34,7 +33,7 @@ export class ContractsComponent implements OnInit {
   public getOrderBidContract(wallet: IWallet) {
     this.contract_service.createInstance("OrderBid", wallet.id).subscribe(
       (data: IContract) => {
-        this.all_contract_data = data;
+        this.all_contract_data.push(data);
       },
       (error) => {
         console.log('My error', error);
@@ -45,6 +44,17 @@ export class ContractsComponent implements OnInit {
   public getShipBidContract(wallet: IWallet) {
     this.contract_service.createInstance("ShipBid", wallet.id).subscribe(
       (data: IContract) => {
+        this.all_contract_data.push(data);
+      },
+      (error) => {
+        console.log('My error', error);
+      }
+    );
+  }
+
+  public getAllContracts(wallet: IWallet) {
+    this.contract_service.getAllInstances(wallet.id).subscribe(
+      (data: Array<IContract>) => {
         this.all_contract_data = data;
       },
       (error) => {

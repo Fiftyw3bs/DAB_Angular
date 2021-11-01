@@ -17,7 +17,7 @@ export class UserService {
     user_name: string,
     password: string
   ): Observable<Array<IUser>> {
-    return this.apiService.post(`${environment.db_url}/login`, {
+    return this.apiService.post(`${environment.server_url}/login`, {
       email: user_name,
       password,
     });

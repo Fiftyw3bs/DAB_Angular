@@ -63,16 +63,16 @@ export class SigninSignupComponent implements OnInit {
     const value = this.signUpform.value;
     this.contractService.gen_wallet("").subscribe(
       (wallet) => {
-        var w: IWallet;
-        w.id = wallet["wiWallet"]["getWalletId"];
-        w.pubkeyhash = wallet["wiPubKeyHash"]["getPubKeyHash"];
-        w.pubkey = wallet["wiPubKey"]["getPubKey"];
+        // var w: IWallet;
+        // w.id = wallet["wiWallet"]["getWalletId"];
+        // w.pubkeyhash = wallet["wiPubKeyHash"]["getPubKeyHash"];
+        // w.pubkey = wallet["wiPubKey"]["getPubKey"];
         reqData = {
           email: value.email,
           mobNumber: value.mobNumber,
           name: value.name,
           password: value.password,
-          wallet: w
+          wallet: wallet
         };
         console.log(reqData)
         this.userService.addUser(reqData).subscribe(

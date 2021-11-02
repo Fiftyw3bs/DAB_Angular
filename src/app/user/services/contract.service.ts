@@ -15,7 +15,7 @@ export class ContractsService {
 
   constructor(private apiService: ApiService) {}
 
-  public createInstance(contract: string, wallet_id: number): Observable<IContract> {
+  public createInstance(contract: string, wallet_id: string): Observable<IContract> {
     var pay_load = { "caID": contract
                   , "caWallet": { "getWallet": wallet_id }
                   }
@@ -32,6 +32,10 @@ export class ContractsService {
 
   public status(contract: IContract): Observable<JSON> {
     return this.apiService.get(this.contract_url + 'instance/' + contract.instance_id + "/status")
+  }
+
+  public send_request(entity: any, contract: IContract, action: string): Observable<JSON> {
+    return this.apiService.post(this.contract_url + 'instance/' + contract.instance_id + "/endpoint/" + action + contract.name, entity)
   }
 
   public get_thread_token(contract: IContract): Observable<IToken> {

@@ -1,13 +1,15 @@
 import { IBid } from './../../model/bid.d';
 import { HelperService } from './../../../services/helper.service';
 import { ProductService } from './../../../admin/services/product.service';
+import { ContractsService } from './../../../user/services/contract.service';
 import { IProduct } from './../../../admin/models/product.d';
 import { OrdersService } from './../../services/orders.service';
 import { IOrder } from './../../model/order.d';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { BidsService } from '../../services/bids.service';
+import { ContractsComponent } from '../contract/contracts.component';
 declare var jQuery: any;
 
 @Component({
@@ -16,6 +18,8 @@ declare var jQuery: any;
   styleUrls: ['./orders.component.scss'],
 })
 export class OrdersComponent implements OnInit {
+  @ViewChild("app-contracts") contract_component: ContractsComponent;
+
   public all_order_data: Array<IOrder>;
   public JSON: any;
   public addEditOrderForm: FormGroup;
@@ -29,6 +33,7 @@ export class OrdersComponent implements OnInit {
     biddingPrice: [{ value: '' }, Validators.required],
     bidQuantity: [{ value: '' }, Validators.required],
     status: [{ value: '' }, Validators.required],
+    salesType: [{ value: '' }, Validators.required],
   });
   public isFormSubmitted: boolean; //for form validation
   public popup_header: string;
@@ -42,6 +47,7 @@ export class OrdersComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private orderService: OrdersService,
+    private contractService: ContractsService,
     private toastr: ToastrService,
     private productService: ProductService,
     public helperService: HelperService,
@@ -53,6 +59,7 @@ export class OrdersComponent implements OnInit {
   ngOnInit() {
     this.addEditOrderForm = this.formBuilder.group({
       product: ['', Validators.required],
+      salesType: ['', Validators.required],
       quantity: [''],
     });
     this.getAllOrders();
@@ -91,7 +98,7 @@ export class OrdersComponent implements OnInit {
     this.addEditOrderForm.reset();
   }
 
-  public addNewOrder() {
+  public addNewOrder(wallet_id: string) {
     this.isFormSubmitted = true;
     if (this.addEditOrderForm.invalid) {
       return;
@@ -100,6 +107,7 @@ export class OrdersComponent implements OnInit {
     const reqData = {
       product: JSON.parse(value.product),
       quantity: value.quantity,
+      salesType: JSON.parse(value.salesType),
       dateCreated: new Date(),
       orderer: this.helperService.isLoggedIn.value.email,
     };
@@ -107,6 +115,7 @@ export class OrdersComponent implements OnInit {
     this.orderService.addNewOrder(reqData).subscribe(
       (data) => {
         jQuery('#addEditOrderModal').modal('toggle');
+        this.contract_component.create(wallet_id, reqData, "order");
         this.getAllOrders();
       },
       (err) => {
@@ -125,6 +134,7 @@ export class OrdersComponent implements OnInit {
       const value = data;
       this.addEditOrderForm.setValue({
         product: JSON.stringify(value.product),
+        salesType: JSON.stringify(value.salesType),
         quantity: value.quantity,
       });
     });
@@ -138,6 +148,7 @@ export class OrdersComponent implements OnInit {
     const value = this.addEditOrderForm.value;
     const reqData: any = {
       product: JSON.parse(value.product),
+      salesType: JSON.parse(value.salesType),
       quantity: value.quantity,
     };
     Object.assign(this.single_order_data, reqData);
@@ -239,6 +250,7 @@ export class OrdersComponent implements OnInit {
         dateCreated: order.dateCreated,
         orderer: order.orderer,
         orderStatus: order.status,
+        salesType: order.salesType,
         orderBids: 0,
         biddingPrice: 0,
         bidQuantity: 0,
@@ -261,6 +273,7 @@ export class OrdersComponent implements OnInit {
         orderer: value.orderer,
         orderStatus: value.orderStatus,
         orderBids: value.orderBids,
+        salesType: value.salesType,
         id: this.single_order_data.id,
       },
       bidder: this.helperService.isLoggedIn.value.email,

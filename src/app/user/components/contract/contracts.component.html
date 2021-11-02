@@ -18,16 +18,16 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let product_data of all_product_data; let i= index">
+    <tr *ngFor="let contract_data of all_contract_data; let i= index">
       <th scope="row">{{i+1}}</th>
-      <td>{{product_data.name}}</td>
+      <td>{{contract_data.name}}</td>
       <td>
-        <img [src]="product_data.uploadPhoto" alt="product image" width="200">
+        <img [src]="contract_data.uploadPhoto" alt="product image" width="200">
       </td>
-      <td>{{product_data.description}}</td>
+      <td>{{contract_data.description}}</td>
 
-      <td>{{product_data.cost}}</td>
-      <td>{{product_data.total_number_sold}}</td>
+      <td>{{contract_data.cost}}</td>
+      <td>{{contract_data.total_number_sold}}</td>
     </tr>
   </tbody>
 </table>

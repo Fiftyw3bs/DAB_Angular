@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 export class UserService {
   private user_url = environment.db_url + '/user/';
   private all_user = environment.db_url + '/user';
+  private login_url = environment.contract_url + '/login';
 
   constructor(private apiService: ApiService) {}
 
@@ -17,7 +18,7 @@ export class UserService {
     user_name: string,
     password: string
   ): Observable<Array<IUser>> {
-    return this.apiService.post(`${environment.server_url}/login`, {
+    return this.apiService.post(this.login_url, {
       email: user_name,
       password,
     });

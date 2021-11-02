@@ -5,11 +5,13 @@ import { AppComponent } from './app.component';
 import { PageNotFoundErrorComponent } from './layouts/page-not-found-error/page-not-found-error.component';
 import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
+import { ContractsComponent } from './user/components/contract/contracts.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BackendHttpInterceptor } from './interceptors/http.interceptor';
+import { CommonModule } from '@angular/common';  
 
 @NgModule({
   declarations: [
@@ -17,10 +19,11 @@ import { BackendHttpInterceptor } from './interceptors/http.interceptor';
     PageNotFoundErrorComponent,
     HeaderComponent,
     FooterComponent,
+    ContractsComponent,
   ],
   imports: [
     BrowserModule,
-    // CommonModule,
+    CommonModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,

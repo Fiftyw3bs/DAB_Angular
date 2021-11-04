@@ -33,7 +33,11 @@ export class OrdersComponent implements OnInit {
     biddingPrice: [{ value: '' }, Validators.required],
     bidQuantity: [{ value: '' }, Validators.required],
     status: [{ value: '' }, Validators.required],
-    salesType: [{ value: '' }, Validators.required],
+    sellType: [{ value: '' }, Validators.required],
+    selfDelivery: [{ value: '' }, Validators.required],
+    shipCost: [{ value: '' }, Validators.required],
+    expectedDate: [{ value: '' }, Validators.required],
+    deliveryDate: [{ value: '' }, Validators.required],
   });
   public isFormSubmitted: boolean; //for form validation
   public popup_header: string;
@@ -61,6 +65,11 @@ export class OrdersComponent implements OnInit {
       product: ['', Validators.required],
       salesType: ['', Validators.required],
       quantity: [''],
+      sellType: [{ value: '' }, Validators.required],
+      selfDelivery: [{ value: '' }, Validators.required],
+      shipCost: [{ value: '' }, Validators.required],
+      expectedDate: [{ value: '' }, Validators.required],
+      deliveryDate: [{ value: '' }, Validators.required],
     });
     this.getAllOrders();
     this.getAllProducts();
@@ -104,14 +113,21 @@ export class OrdersComponent implements OnInit {
       return;
     }
     const value = this.addEditOrderForm.value;
+    
     const reqData = {
       product: JSON.parse(value.product),
+      sellType: value.sellType,
+      selfDelivery: value.selfDelivery,
+      shipCost: value.shipCost,
+      expectedDate: value.expectedDate,
+      deliveryDate: value.deliveryDate,
       quantity: value.quantity,
       salesType: JSON.parse(value.salesType),
       dateCreated: new Date(),
       orderer: this.helperService.isLoggedIn.value.email,
     };
     Object.assign(reqData, { status: 'PENDING' });
+
     this.orderService.addNewOrder(reqData).subscribe(
       (data) => {
         jQuery('#addEditOrderModal').modal('toggle');
@@ -134,8 +150,12 @@ export class OrdersComponent implements OnInit {
       const value = data;
       this.addEditOrderForm.setValue({
         product: JSON.stringify(value.product),
-        salesType: JSON.stringify(value.salesType),
         quantity: value.quantity,
+        sellType: value.sellType,
+        selfDelivery: value.selfDelivery,
+        shipCost: value.shipCost,
+        expectedDate: value.expectedDate,
+        deliveryDate: value.deliveryDate,
       });
     });
   }
@@ -150,6 +170,11 @@ export class OrdersComponent implements OnInit {
       product: JSON.parse(value.product),
       salesType: JSON.parse(value.salesType),
       quantity: value.quantity,
+      sellType: value.sellType,
+      selfDelivery: value.selfDelivery,
+      shipCost: value.shipCost,
+      expectedDate: value.expectedDate,
+      deliveryDate: value.deliveryDate,
     };
     Object.assign(this.single_order_data, reqData);
     this.orderService
@@ -234,6 +259,11 @@ export class OrdersComponent implements OnInit {
             biddingPrice: data.biddingPrice,
             bidQuantity: data.bidQuantity,
             status: data.status,
+            sellType: data.sellType,
+            selfDelivery: data.selfDelivery,
+            shipCost: data.shipCost,
+            expectedDate: data.expectedDate,
+            deliveryDate: data.deliveryDate,
           });
         },
         (err) => {
@@ -250,7 +280,11 @@ export class OrdersComponent implements OnInit {
         dateCreated: order.dateCreated,
         orderer: order.orderer,
         orderStatus: order.status,
-        salesType: order.salesType,
+        sellType: false,
+        selfDelivery: false,
+        shipCost: 0,
+        expectedDate: Date.now(),
+        deliveryDate: Date.now(),
         orderBids: 0,
         biddingPrice: 0,
         bidQuantity: 0,
@@ -275,7 +309,17 @@ export class OrdersComponent implements OnInit {
         orderBids: value.orderBids,
         salesType: value.salesType,
         id: this.single_order_data.id,
+        sellType: this.single_order_data.sellType,
+        selfDelivery: this.single_order_data.selfDelivery,
+        shipCost: this.single_order_data.shipCost,
+        expectedDate: this.single_order_data.expectedDate,
+        deliveryDate: this.single_order_data.deliveryDate,
       },
+      sellType: value.sellType,
+      selfDelivery: value.selfDelivery,
+      shipCost: value.shipCost,
+      expectedDate: value.expectedDate,
+      deliveryDate: value.deliveryDate,
       bidder: this.helperService.isLoggedIn.value.email,
       biddingPrice: value.biddingPrice,
       bidQuantity: value.bidQuantity,

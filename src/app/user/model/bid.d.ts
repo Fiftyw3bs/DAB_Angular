@@ -7,4 +7,9 @@ export interface IBid {
   bidDate: any;
   status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN';
   order?: IOrder;
+  sellType: boolean,
+  selfDelivery: boolean,
+  shipCost: number,
+  expectedDate: Date,
+  deliveryDate?: Date,
 }

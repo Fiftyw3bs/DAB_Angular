@@ -63,7 +63,6 @@ export class OrdersComponent implements OnInit {
   ngOnInit() {
     this.addEditOrderForm = this.formBuilder.group({
       product: ['', Validators.required],
-      salesType: ['', Validators.required],
       quantity: [''],
       sellType: [{ value: '' }, Validators.required],
       selfDelivery: [{ value: '' }, Validators.required],
@@ -122,7 +121,6 @@ export class OrdersComponent implements OnInit {
       expectedDate: value.expectedDate,
       deliveryDate: value.deliveryDate,
       quantity: value.quantity,
-      salesType: JSON.parse(value.salesType),
       dateCreated: new Date(),
       orderer: this.helperService.isLoggedIn.value.email,
     };
@@ -168,7 +166,6 @@ export class OrdersComponent implements OnInit {
     const value = this.addEditOrderForm.value;
     const reqData: any = {
       product: JSON.parse(value.product),
-      salesType: JSON.parse(value.salesType),
       quantity: value.quantity,
       sellType: value.sellType,
       selfDelivery: value.selfDelivery,
@@ -307,7 +304,6 @@ export class OrdersComponent implements OnInit {
         orderer: value.orderer,
         orderStatus: value.orderStatus,
         orderBids: value.orderBids,
-        salesType: value.salesType,
         id: this.single_order_data.id,
         sellType: this.single_order_data.sellType,
         selfDelivery: this.single_order_data.selfDelivery,

@@ -116,6 +116,62 @@
                     required</div>
                 </div>
               </div>
+              
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Sales Type</label>
+                <select class="form-control" formControlName="sellType" id="exampleFormControlSelect1">
+                  <option [value]="true">
+                    Sell Type
+                  </option>
+                  <option [value]="false">
+                    Buy Type
+                  </option>
+
+                </select>
+                <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
+                  <div *ngIf="rf.product.errors.required">Name is
+                    required</div>
+                </div>
+              </div>
+
+              <div class="form-group checkbox">
+                <label for="productMRP">Self Delivery</label>
+                <input type="checkbox" class="form-control" formControlName="selfDelivery" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('selfDelivery').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('selfDelivery').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('selfDelivery').errors.required">Self Delivery</div>
+                </div>
+              </div>  
+              
+              <div class="form-group">
+                <label for="productMRP">Delivery Date</label>
+                <input type="date" class="form-control" formControlName="deliveryDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('deliveryDate').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('deliveryDate').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('deliveryDate').errors.required">Delivery Date</div>
+                </div>
+              </div>  
+              
+              
+              <div class="form-group">
+                <label for="productMRP">Shipping Cost</label>
+                <input type="number" class="form-control" formControlName="shipCost" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('shipCost').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('shipCost').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('shipCost').errors.required">Shipping Cost</div>
+                </div>
+              </div>  
+              
+              
+              <div class="form-group">
+                <label for="productMRP">Harvest/Expected Date</label>
+                <input type="date" class="form-control" formControlName="expectedDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('expectedDate').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('expectedDate').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('expectedDate').errors.required">Harvest/Expected Date</div>
+                </div>
+              </div>  
+              
               <div class="form-group">
                 <button class="btn btn-primary" (click)="addNewOrder()" *ngIf="add_order">Add New</button>
                 <button class="btn btn-primary" (click)="updateOrder()" *ngIf="edit_order">Update</button>
@@ -195,25 +251,63 @@
                 <div *ngIf="isFormSubmitted && addEditBidForm.get('bidQuantity').errors" class="invalid-feedback">
                   <div *ngIf="addEditBidForm.get('bidQuantity').errors.required">Bid Quantity</div>
                 </div>
-              </div>
+              </div>              
+             
               <div class="form-group">
-                <label for="exampleFormControlSelect1">Bid Status</label>
-                <select class="form-control" formControlName="status" id="exampleFormControlSelect1">
-                  <option value="WITHDRAWN">
-                    WITHDRAWN
+                <label for="exampleFormControlSelect1">Sales Type</label>
+                <select class="form-control" formControlName="sellType" id="exampleFormControlSelect1">
+                  <option [value]="true">
+                    Sell Type
                   </option>
-                  <option value="PENDING">
-                    PENDING
+                  <option [value]="false">
+                    Buy Type
                   </option>
-                  <option value="ACCEPTED" disabled>
-                    ACCEPTED
-                  </option>
-                  <option value="REJECTED" disabled>
-                    REJECTED
-                  </option>
+
                 </select>
+                <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
+                  <div *ngIf="rf.product.errors.required">Name is
+                    required</div>
+                </div>
               </div>
 
+              <div class="form-group">
+                <label for="productMRP">Self Delivery</label>
+                <input type="checkbox" class="form-control" formControlName="selfDelivery" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('selfDelivery').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('selfDelivery').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('selfDelivery').errors.required">Self Delivery</div>
+                </div>
+              </div>  
+              
+              <div class="form-group">
+                <label for="productMRP">Delivery Date</label>
+                <input type="date" class="form-control" formControlName="deliveryDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('deliveryDate').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('deliveryDate').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('deliveryDate').errors.required">Delivery Date</div>
+                </div>
+              </div>  
+              
+              
+              <div class="form-group">
+                <label for="productMRP">Shipping Cost</label>
+                <input type="number" class="form-control" formControlName="shipCost" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('shipCost').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('shipCost').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('shipCost').errors.required">Shipping Cost</div>
+                </div>
+              </div>  
+              
+              
+              <div class="form-group">
+                <label for="productMRP">Harvest/Expected Date</label>
+                <input type="date" class="form-control" formControlName="expectedDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                      addEditBidForm.get('expectedDate').errors}" />
+                <div *ngIf="isFormSubmitted && addEditBidForm.get('expectedDate').errors" class="invalid-feedback">
+                  <div *ngIf="addEditBidForm.get('expectedDate').errors.required">Harvest/Expected Date</div>
+                </div>
+              </div>  
+              
               <div class="form-group">
                 <button class="btn btn-primary" *ngIf="isBidCreate" (click)="addNewBid()">Add New Bid</button>
                 <button class="btn btn-primary" *ngIf="!isBidCreate">Update</button>

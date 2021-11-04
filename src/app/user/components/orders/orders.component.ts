@@ -4,6 +4,7 @@ import { ProductService } from './../../../admin/services/product.service';
 import { IProduct } from './../../../admin/models/product.d';
 import { OrdersService } from './../../services/orders.service';
 import { IOrder } from './../../model/order.d';
+import { SalesType } from './../../model/salesType.d';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -29,6 +30,11 @@ export class OrdersComponent implements OnInit {
     biddingPrice: [{ value: '' }, Validators.required],
     bidQuantity: [{ value: '' }, Validators.required],
     status: [{ value: '' }, Validators.required],
+    sellType: [{ value: '' }, Validators.required],
+    selfDelivery: [{ value: '' }, Validators.required],
+    shipCost: [{ value: '' }, Validators.required],
+    expectedDate: [{ value: '' }, Validators.required],
+    deliveryDate: [{ value: '' }, Validators.required],
   });
   public isFormSubmitted: boolean; //for form validation
   public popup_header: string;
@@ -38,6 +44,7 @@ export class OrdersComponent implements OnInit {
   public products: Array<IProduct>;
   private single_order_data: IOrder;
   private single_bid_data: IBid;
+  public salesType: SalesType;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -54,6 +61,11 @@ export class OrdersComponent implements OnInit {
     this.addEditOrderForm = this.formBuilder.group({
       product: ['', Validators.required],
       quantity: [''],
+      sellType: [{ value: '' }, Validators.required],
+      selfDelivery: [{ value: '' }, Validators.required],
+      shipCost: [{ value: '' }, Validators.required],
+      expectedDate: [{ value: '' }, Validators.required],
+      deliveryDate: [{ value: '' }, Validators.required],
     });
     this.getAllOrders();
     this.getAllProducts();
@@ -97,8 +109,14 @@ export class OrdersComponent implements OnInit {
       return;
     }
     const value = this.addEditOrderForm.value;
+    
     const reqData = {
       product: JSON.parse(value.product),
+      sellType: value.sellType,
+      selfDelivery: value.selfDelivery,
+      shipCost: value.shipCost,
+      expectedDate: value.expectedDate,
+      deliveryDate: value.deliveryDate,
       quantity: value.quantity,
       dateCreated: new Date(),
       orderer: this.helperService.isLoggedIn.value.email,
@@ -126,6 +144,11 @@ export class OrdersComponent implements OnInit {
       this.addEditOrderForm.setValue({
         product: JSON.stringify(value.product),
         quantity: value.quantity,
+        sellType: value.sellType,
+        selfDelivery: value.selfDelivery,
+        shipCost: value.shipCost,
+        expectedDate: value.expectedDate,
+        deliveryDate: value.deliveryDate,
       });
     });
   }
@@ -139,6 +162,11 @@ export class OrdersComponent implements OnInit {
     const reqData: any = {
       product: JSON.parse(value.product),
       quantity: value.quantity,
+      sellType: value.sellType,
+      selfDelivery: value.selfDelivery,
+      shipCost: value.shipCost,
+      expectedDate: value.expectedDate,
+      deliveryDate: value.deliveryDate,
     };
     Object.assign(this.single_order_data, reqData);
     this.orderService
@@ -223,6 +251,11 @@ export class OrdersComponent implements OnInit {
             biddingPrice: data.biddingPrice,
             bidQuantity: data.bidQuantity,
             status: data.status,
+            sellType: data.sellType,
+            selfDelivery: data.selfDelivery,
+            shipCost: data.shipCost,
+            expectedDate: data.expectedDate,
+            deliveryDate: data.deliveryDate,
           });
         },
         (err) => {
@@ -262,7 +295,17 @@ export class OrdersComponent implements OnInit {
         orderStatus: value.orderStatus,
         orderBids: value.orderBids,
         id: this.single_order_data.id,
+        sellType: this.single_order_data.sellType,
+        selfDelivery: this.single_order_data.selfDelivery,
+        shipCost: this.single_order_data.shipCost,
+        expectedDate: this.single_order_data.expectedDate,
+        deliveryDate: this.single_order_data.deliveryDate,
       },
+      sellType: value.sellType,
+      selfDelivery: value.selfDelivery,
+      shipCost: value.shipCost,
+      expectedDate: value.expectedDate,
+      deliveryDate: value.deliveryDate,
       bidder: this.helperService.isLoggedIn.value.email,
       biddingPrice: value.biddingPrice,
       bidQuantity: value.bidQuantity,

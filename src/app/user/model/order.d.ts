@@ -1,4 +1,5 @@
 import { IProduct } from './../../admin/models/product.d';
+
 export interface IOrder {
   id?: string;
   product: IProduct;
@@ -6,6 +7,11 @@ export interface IOrder {
   dateCompleted?: string;
   dateCreated?: any;
   orderer?: string;
+  sellType: boolean,
+  selfDelivery: boolean,
+  shipCost: number,
+  expectedDate: Date,
+  deliveryDate?: Date,
   status?: 'ACCEPTED' | 'PENDING' | 'CANCELLED';
   bids?: number;
   bidder?: string;

@@ -18,7 +18,7 @@ export class BackendHttpInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     if (
-      request.url.includes('dagribiz.farm') &&
+      request.url.includes('dagribiz') &&
       request.method === 'POST' &&
       request.url.endsWith('login')
     ) {

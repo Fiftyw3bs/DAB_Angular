@@ -12,5 +12,5 @@ export interface IUser {
     addLine1: string;
   };
   uploadPhoto?: string;
-  wallet?: IWallet;
+  wallet?: string;
 }

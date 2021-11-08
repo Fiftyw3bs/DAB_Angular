@@ -1,4 +1,5 @@
 export class IToken {
-  currencySymbol: string;
-  tokenName: string
+  currSymbol: string;
+  tokenName: string;
+  ttRef: number;
 }

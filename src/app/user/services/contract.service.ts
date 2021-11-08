@@ -15,11 +15,11 @@ export class ContractsService {
 
   constructor(private apiService: ApiService) {}
 
-  public createInstance(contract: string, wallet_id: string): Observable<IContract> {
+  public createInstance(contract: string, wallet_id: string): Promise<IContract> {
     var pay_load = { "caID": contract
-                  , "caWallet": { "getWallet": wallet_id }
+                  , "caWallet": { "getWalletId": wallet_id }
                   }
-    return this.apiService.post(this.contract_url + "activate", pay_load)
+    return this.apiService.post(this.contract_url + "activate", pay_load).toPromise()
   }
 
   public getAllInstances(wallet_id: number): Observable<Array<IContract>> {
@@ -30,35 +30,36 @@ export class ContractsService {
     return this.apiService.post(this.wallet_url, wallet_data);
   }
 
-  public status(contract: IContract): Observable<JSON> {
-    return this.apiService.get(this.contract_url + 'instance/' + contract.instance_id + "/status")
+  public async status(contract: IContract): Promise<any> {
+    return await this.apiService.get(this.contract_url + 'instance/' + this.stripquotes(JSON.parse(JSON.stringify(contract)).unContractInstanceId) + "/status").toPromise()
   }
 
-  public send_request(entity: any, contract: IContract, action: string): Observable<JSON> {
-    return this.apiService.post(this.contract_url + 'instance/' + contract.instance_id + "/endpoint/" + action + contract.name, entity)
+  private stripquotes(a) {
+    if (a.charAt(0) === '"' && a.charAt(a.length-1) === '"') {
+        return a.substr(1, a.length-2);
+    }
+    return a;
   }
 
-  public get_thread_token(contract: IContract): Observable<IToken> {
-    var ret: Observable<IToken>;
-
-    this.status(contract).subscribe(
+  public send_request(entity: any, contract: string, contract_instance_id: IContract, action: string): Promise<JSON> {
+    return this.apiService.post(this.contract_url + 'instance/' + this.stripquotes(JSON.parse(JSON.stringify(contract_instance_id)).unContractInstanceId) + "/endpoint/" + action + "-" + contract, entity).toPromise()
+  }
+  
+  public async get_thread_token(contract: IContract): Promise<IToken> {
+    var tt: IToken;
+    var tt1: any;
+    alert("Order completed")
+    await this.status(contract).then(
       retVal => {
-        if (retVal["cicCurrentState"]["observableState"]) {
-          var myToken: IToken;
-          myToken.currencySymbol = retVal["cicCurrentState"]["observableState"]["ttCurrencySymbol"];
-          myToken.tokenName = retVal["cicCurrentState"]["observableState"]["ttOutRef"];
-          ret = new Observable(subscriber => {
-            subscriber.next(myToken);
-            setTimeout(() => {
-              subscriber.next(myToken); // happens asynchronously
-            }, 1000);
-          });
-        }
+        tt = retVal.cicCurrentState.observableState;
+      },
+      (error) => {
+        console.log("Something went wrong", error)
       }
     );
-
-    return ret;
+    return tt;
   }
+
   public contracts(): Observable<JSON> {
       return this.apiService.get(this.contract_url + "instances")
   }

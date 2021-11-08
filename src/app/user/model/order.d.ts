@@ -7,6 +7,8 @@ export interface IOrder {
   dateCompleted?: string;
   dateCreated?: any;
   orderer?: string;
+  costPerUnit: number;
+  unit: string;
   sellType: boolean,
   selfDelivery: boolean,
   shipCost: number,
@@ -15,4 +17,5 @@ export interface IOrder {
   status?: 'ACCEPTED' | 'PENDING' | 'CANCELLED';
   bids?: number;
   bidder?: string;
+  tt?: any
 }

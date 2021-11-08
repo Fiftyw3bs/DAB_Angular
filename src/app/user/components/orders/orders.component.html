@@ -28,7 +28,7 @@
       <td>{{order_data.product.name}}</td>
       <td>{{order_data.dateCreated | date}} </td>
       <td>{{order_data.bids}}</td>
-      <td>{{order_data.orderer}}</td>
+      <td> {{ (order_data.orderer.length>6)? (order_data.orderer | slice:0:6)+'...':(order_data.orderer) }}</td>
       <td *ngIf="helperService.isLoggedIn.value.admin">
         <span class="sim-pointer" (click)="updateStatus(order_data,
               'ACCEPTED')">
@@ -116,6 +116,24 @@
                     required</div>
                 </div>
               </div>
+
+              <div class="form-group">
+                <label for="productMRP">Unit</label>
+                <input type="text" class="form-control" formControlName="unit" [ngClass]="{'is-invalid':isFormSubmitted &&
+                                    rf.unit.errors}" />
+                <div *ngIf="isFormSubmitted && rf.unit.errors" class="invalid-feedback">
+                  <div *ngIf="rf.unit.errors.required">Unit is required</div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="productMRP">Cost per unit</label>
+                <input type="number" class="form-control" formControlName="costPerUnit" [ngClass]="{'is-invalid':isFormSubmitted &&
+                                    rf.costPerUnit.errors}" />
+                <div *ngIf="isFormSubmitted && rf.costPerUnit.errors" class="invalid-feedback">
+                  <div *ngIf="rf.costPerUnit.errors.required">Cost per Unit is required</div>
+                </div>
+              </div>
               
               <div class="form-group">
                 <label for="exampleFormControlSelect1">Sales Type</label>
@@ -173,7 +191,7 @@
               </div>  
               
               <div class="form-group">
-                <button class="btn btn-primary" (click)="addNewOrder(helperService.isLoggedIn.value.wallet)" *ngIf="add_order">Add New</button>
+                <button class="btn btn-primary" (click)="addNewOrder(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)" *ngIf="add_order">Add New</button>
                 <button class="btn btn-primary" (click)="updateOrder()" *ngIf="edit_order">Update</button>
               </div>
             </form>

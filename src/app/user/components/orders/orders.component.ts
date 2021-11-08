@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { BidsService } from '../../services/bids.service';
 import { ContractsComponent } from '../contract/contracts.component';
+import { IToken } from '../../model/token';
 declare var jQuery: any;
 
 @Component({
@@ -69,6 +70,8 @@ export class OrdersComponent implements OnInit {
       shipCost: [{ value: '' }, Validators.required],
       expectedDate: [{ value: '' }, Validators.required],
       deliveryDate: [{ value: '' }, Validators.required],
+      unit: [{ value: '' }, Validators.required],
+      costPerUnit: [{ value: '' }, Validators.required],
     });
     this.getAllOrders();
     this.getAllProducts();
@@ -106,14 +109,20 @@ export class OrdersComponent implements OnInit {
     this.addEditOrderForm.reset();
   }
 
-  public addNewOrder(wallet_id: string) {
+  private capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  public async addNewOrder(wallet_id: string) {
     this.isFormSubmitted = true;
     if (this.addEditOrderForm.invalid) {
       return;
     }
     const value = this.addEditOrderForm.value;
-    
-    const reqData = {
+
+    var wallet_pkh = JSON.parse(JSON.stringify(this.helperService.isLoggedIn.value.wallet)).wiPubKeyHash.getPubKeyHash;
+
+    var reqData = {
       product: JSON.parse(value.product),
       sellType: value.sellType,
       selfDelivery: value.selfDelivery,
@@ -121,17 +130,79 @@ export class OrdersComponent implements OnInit {
       expectedDate: value.expectedDate,
       deliveryDate: value.deliveryDate,
       quantity: value.quantity,
+      unit: value.unit,
+      costPerUnit: value.costPerUnit,
       dateCreated: new Date(),
-      orderer: this.helperService.isLoggedIn.value.email,
+      orderer: wallet_id,
+      tt: null
     };
     Object.assign(reqData, { status: 'PENDING' });
+    var contr: string = "order";
+    
+    return await this.contractService.createInstance(this.capitalizeFirstLetter(contr), wallet_id).then(
+      (contract) => {
+        var sell_type: boolean;
+        if (value.sellType == "true") {
+          sell_type = true;
+        } else {
+          sell_type = false;
+        }
+        var order = {
+            "gopQuantity": value.quantity,
+            "gopToken":  null,
+            "gopUnit": value.unit,
+            "gopOwner": {
+                "getPubKeyHash": wallet_pkh
+            },
+            "gopProduct": {
+                "unTokenName": JSON.parse(value.product).name
+            },
+            "gopAcceptedCurrSymbol": {
+                "unCurrencySymbol": ""
+            },
+            "gopCostPerUnit": value.costPerUnit,
+            "gopAcceptedTokenName": {
+                "unTokenName": ""
+            },
+            "gopType": 
+            {
+                "stpSellType": sell_type,
+                "stpSelfDelivery": value.selfDelivery,
+                "stpShipCost": value.shipCost,
+                "stpExpectedDate": new Date(value.expectedDate).getTime(),
+                "stpDeliveryDate": new Date(value.deliveryDate).getTime()
+            },
+            "gopAction": "a5",
+        };
 
-    this.orderService.addNewOrder(reqData).subscribe(
-      (data) => {
-        jQuery('#addEditOrderModal').modal('toggle');
-        this.contract_component.create(wallet_id, reqData, "order");
-        this.getAllOrders();
-      },
+      return this.contractService.send_request(order, contr, contract, "create").then(
+        (response: JSON) => {
+          this.contractService.get_thread_token(contract).then(
+            (token: IToken) => {
+              reqData.tt = token
+              this.orderService.addNewOrder(reqData).subscribe(
+                (data) => {
+                  console.log('Order sent', data)
+                },
+                (error) => {
+                  console.log('Could not create Order', error)
+                }
+              )
+            },
+            (error) => {
+              console.log('Problem fetching ThreadToken', error)
+            }
+          );
+        },
+        (error) => {
+          console.log('My error', error);
+        }
+      );
+
+      jQuery('#addEditOrderModal').modal('toggle');
+      this.getAllOrders();
+      
+    },
       (err) => {
         this.toastr.error('Some Error Occured!', 'FAILED!');
       }
@@ -310,6 +381,8 @@ export class OrdersComponent implements OnInit {
         shipCost: this.single_order_data.shipCost,
         expectedDate: this.single_order_data.expectedDate,
         deliveryDate: this.single_order_data.deliveryDate,
+        unit: this.single_order_data.unit,
+        costPerUnit: this.single_order_data.costPerUnit,
       },
       sellType: value.sellType,
       selfDelivery: value.selfDelivery,

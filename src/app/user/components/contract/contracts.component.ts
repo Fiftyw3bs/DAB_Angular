@@ -25,9 +25,9 @@ export class ContractsComponent implements OnInit {
   }
 
   public create(wallet_id: string, entity: any, contract: string) {
-    this.contract_service.createInstance(this.capitalizeFirstLetter(contract), wallet_id).subscribe(
+    this.contract_service.createInstance(this.capitalizeFirstLetter(contract), wallet_id).then(
       (contract: IContract) => {
-        this.contract_service.send_request(entity, contract, "create").subscribe(
+        this.contract_service.send_request(entity, "", contract, "create").then(
           (response: JSON) => {
             console.log('Order sent', response)
             this.isSubmitted = true;
@@ -46,7 +46,7 @@ export class ContractsComponent implements OnInit {
   }
 
   public cancel(wallet_id: string, entity: any, contract: string) {
-    this.contract_service.createInstance(contract, wallet_id).subscribe(
+    this.contract_service.createInstance(contract, wallet_id).then(
       (data: IContract) => {
         this.all_contract_data.push(data);
       },
@@ -57,7 +57,7 @@ export class ContractsComponent implements OnInit {
   }
 
   public status(wallet_id: string, entity: any, contract: string) {
-    this.contract_service.createInstance(contract, wallet_id).subscribe(
+    this.contract_service.createInstance(contract, wallet_id).then(
       (data: IContract) => {
         this.all_contract_data.push(data);
       },

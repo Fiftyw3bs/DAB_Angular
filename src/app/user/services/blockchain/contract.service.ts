@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { environment } from 'src/environments/environment';
-import { IWallet } from '../model/wallet';
-import { IContract } from '../model/contract';
-import { IToken } from '../model/token';
+import { IWallet } from '../../model/wallet';
+import { IContract } from '../../model/contract';
+import { IToken } from '../../model/token';
+import { OrdersService } from './../../services/orders.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +15,11 @@ export class ContractsService {
   public contract_url = environment.contract_url + '/api/contract/';
   public wallet_url = environment.contract_url + '/wallet/create';
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    protected apiService: ApiService,
+    protected orderService: OrdersService,
+    protected toastr: ToastrService
+  ) {}
 
   public createInstance(contract: string, wallet_id: string): Promise<IContract> {
     var pay_load = { "caID": contract
@@ -24,6 +30,10 @@ export class ContractsService {
 
   public getAllInstances(wallet_id: number): Observable<Array<IContract>> {
     return this.apiService.get(this.contract_url + "instances/wallet/" + wallet_id)
+  }
+
+  protected capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   public gen_wallet(wallet_data: any): Observable<IWallet> {
@@ -47,7 +57,6 @@ export class ContractsService {
   
   public async get_thread_token(contract: IContract): Promise<IToken> {
     var tt: IToken;
-    var tt1: any;
     alert("Order completed")
     await this.status(contract).then(
       retVal => {

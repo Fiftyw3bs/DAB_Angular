@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IContract } from 'src/app/user/model/contract';
-import { ContractsService } from '../../services/contract.service';
+import { ContractsService } from '../../services/blockchain/contract.service';
 import { IWallet } from '../../model/wallet';
 
 @Component({

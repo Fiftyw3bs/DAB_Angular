@@ -5,7 +5,7 @@ import { ControlContainer, FormBuilder, FormGroup, Validators } from '@angular/f
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HelperService } from 'src/app/services/helper.service';
-import { ContractsService } from '../../services/contract.service';
+import { ContractsService } from '../../services/blockchain/contract.service';
 import { IWallet } from '../../model/wallet';
 
 @Component({

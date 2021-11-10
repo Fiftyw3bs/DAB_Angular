@@ -1,199 +1,203 @@
 <br>
-<div class="row">
-  <div class="col-md-10">
-    <strong>All Order List</strong>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10">
+      <strong>All Order List</strong>
+    </div>
+    <div class="col-md-2">
+      <button *ngIf="!helperService.isLoggedIn.value.admin" type="button" class="btn btn-dark float-right"
+        (click)="addOrderPopup()" data-toggle="modal" data-target="#addEditOrderModal">
+        Add New Order
+      </button>
+    </div>
   </div>
-  <div class="col-md-2">
-    <button *ngIf="!helperService.isLoggedIn.value.admin" type="button" class="btn btn-dark float-right"
-      (click)="addOrderPopup()" data-toggle="modal" data-target="#addEditOrderModal">
-      Add New Order
-    </button>
-  </div>
-</div>
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Product Name</th>
-      <th scope="col">Date</th>
-      <th scope="col">Number of Bids</th>
-      <th scope="col">Orderer</th>
-      <th scope="col" *ngIf="helperService.isLoggedIn.value.admin">Accept/Pending/Reject</th>
-      <th scope="col">Order Status</th>
-      <th scope="col">Bid Action</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let order_data of all_order_data; let i= index">
-      <td>{{order_data.product.name}}</td>
-      <td>{{order_data.dateCreated | date}} </td>
-      <td>{{order_data.bids}}</td>
-      <td> {{ (order_data.orderer.length>6)? (order_data.orderer | slice:0:6)+'...':(order_data.orderer) }}</td>
-      <td *ngIf="helperService.isLoggedIn.value.admin">
-        <span class="sim-pointer" (click)="updateStatus(order_data,
-              'ACCEPTED')">
-          <i class="fa fa-check-circle" style="color: green;
-                  font-size: 40px;"></i>
-        </span>
-        &nbsp;&nbsp;&nbsp;
-        <span class="sim-pointer" (click)="updateStatus(order_data,
-              'REJECTED')">
-          <i class="fa fa-times-circle" style="color: red;
-                  font-size: 40px;"></i>
-        </span>
-      </td>
-      <td>{{order_data.status}}</td>
-      <td>
-        <span *ngIf="order_data.orderer === helperService.isLoggedIn.value.email && !!order_data.bids">
-          <span class="sim-pointer" (click)="updateBidStatus(order_data,
-              'ACCEPTED')">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Product Name</th>
+        <th scope="col">Date</th>
+        <th scope="col">Number of Bids</th>
+        <th scope="col">Orderer</th>
+        <th scope="col" *ngIf="helperService.isLoggedIn.value.admin">Accept/Pending/Reject</th>
+        <th scope="col">Order Status</th>
+        <th scope="col">Bid Action</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order_data of all_order_data; let i= index">
+        <td>{{order_data.product.name}}</td>
+        <td>{{order_data.dateCreated | date}} </td>
+        <td>{{order_data.bids}}</td>
+        <td> {{ (order_data.orderer.length>6)? (order_data.orderer | slice:0:6)+'...':(order_data.orderer) }}</td>
+        <td *ngIf="helperService.isLoggedIn.value.admin">
+          <span class="sim-pointer" (click)="updateStatus(order_data,
+                'ACCEPTED')">
             <i class="fa fa-check-circle" style="color: green;
-                  font-size: 40px;"></i>
+                    font-size: 40px;"></i>
           </span>
           &nbsp;&nbsp;&nbsp;
-          <span class="sim-pointer" (click)="updateBidStatus(order_data,
-              'REJECTED')">
+          <span class="sim-pointer" (click)="updateStatus(order_data,
+                'REJECTED')">
             <i class="fa fa-times-circle" style="color: red;
-                  font-size: 40px;"></i>
+                    font-size: 40px;"></i>
           </span>
-        </span>
-      </td>
-      <td>
-        <span
-          *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === helperService.isLoggedIn.value.email"
-          class="sim-pointer cursor" (click)="editOrderPopup(order_data.id)" data-toggle="modal"
-          data-target="#addEditOrderModal"><i class="fa fa-pencil-square-o " aria-hidden="true"></i></span>
-        &nbsp;&nbsp;&nbsp;
-        <span
-          *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === helperService.isLoggedIn.value.email"
-          class="sim-pointer cursor" (click)="deleteOrder(order_data.id)"><i class="fa
-                        fa-trash" aria-hidden="true"></i>
-        </span>
-        <span class="cursor link" *ngIf="order_data.orderer !== helperService.isLoggedIn.value.email &&
-        !helperService.isLoggedIn.value.admin" (click)="openBidDialog(order_data)" data-toggle="modal"
-          data-target="#addEditBidModal">Bid</span>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        </td>
+        <td>{{order_data.status}}</td>
+        <td>
+          <span *ngIf="order_data.orderer === helperService.isLoggedIn.value.email && !!order_data.bids">
+            <span class="sim-pointer" (click)="updateBidStatus(order_data,
+                'ACCEPTED')">
+              <i class="fa fa-check-circle" style="color: green;
+                    font-size: 40px;"></i>
+            </span>
+            &nbsp;&nbsp;&nbsp;
+            <span class="sim-pointer" (click)="updateBidStatus(order_data,
+                'REJECTED')">
+              <i class="fa fa-times-circle" style="color: red;
+                    font-size: 40px;"></i>
+            </span>
+          </span>
+        </td>
+        <td>
+          <span
+            *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === helperService.isLoggedIn.value.email"
+            class="sim-pointer cursor" (click)="editOrderPopup(order_data.id)" data-toggle="modal"
+            data-target="#addEditOrderModal"><i class="fa fa-pencil-square-o " aria-hidden="true"></i></span>
+          &nbsp;&nbsp;&nbsp;
+          <span
+            *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === helperService.isLoggedIn.value.email"
+            class="sim-pointer cursor" (click)="deleteOrder(order_data.id)"><i class="fa
+                          fa-trash" aria-hidden="true"></i>
+          </span>
+          <span class="cursor link" *ngIf="order_data.orderer !== helperService.isLoggedIn.value.email &&
+          !helperService.isLoggedIn.value.admin" (click)="openBidDialog(order_data)" data-toggle="modal"
+            data-target="#addEditBidModal">Bid</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <!-- Modal for add and edit order  -->
-<div class="modal fade" id="addEditOrderModal" tabindex="-1" role="dialog" aria-labelledby="addEditUserTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{{popup_header}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-10 offset-md-1">
-            <form [formGroup]="addEditOrderForm">
-              <div class="form-group">
-                <label for="exampleFormControlSelect1">Select Product</label>
-                <select class="form-control" formControlName="product" id="exampleFormControlSelect1">
-                  <option *ngFor="let product of products" [value]="JSON.stringify(product) ">
-                    {{product.name}}
-                  </option>
+<div class="container-fluid">
+  <div class="modal fade" id="addEditOrderModal" tabindex="-1" role="dialog" aria-labelledby="addEditUserTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{popup_header}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-10 offset-md-1">
+              <form [formGroup]="addEditOrderForm">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Select Product</label>
+                  <select class="form-control" formControlName="product" id="exampleFormControlSelect1">
+                    <option *ngFor="let product of products" [value]="JSON.stringify(product) ">
+                      {{product.name}}
+                    </option>
 
-                </select>
-                <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
-                  <div *ngIf="rf.product.errors.required">Name is
-                    required</div>
+                  </select>
+                  <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
+                    <div *ngIf="rf.product.errors.required">Name is
+                      required</div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="form-group">
-                <label for="productMRP">Quantity</label>
-                <input type="number" class="form-control" formControlName="quantity" [ngClass]="{'is-invalid':isFormSubmitted &&
-                                    rf.quantity.errors}" />
-                <div *ngIf="isFormSubmitted && rf.quantity.errors" class="invalid-feedback">
-                  <div *ngIf="rf.quantity.errors.required">Cost is
-                    required</div>
+                <div class="form-group">
+                  <label for="productMRP">Quantity</label>
+                  <input type="number" class="form-control" formControlName="quantity" [ngClass]="{'is-invalid':isFormSubmitted &&
+                                      rf.quantity.errors}" />
+                  <div *ngIf="isFormSubmitted && rf.quantity.errors" class="invalid-feedback">
+                    <div *ngIf="rf.quantity.errors.required">Cost is
+                      required</div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="form-group">
-                <label for="productMRP">Unit</label>
-                <input type="text" class="form-control" formControlName="unit" [ngClass]="{'is-invalid':isFormSubmitted &&
-                                    rf.unit.errors}" />
-                <div *ngIf="isFormSubmitted && rf.unit.errors" class="invalid-feedback">
-                  <div *ngIf="rf.unit.errors.required">Unit is required</div>
+                <div class="form-group">
+                  <label for="productMRP">Unit</label>
+                  <input type="text" class="form-control" formControlName="unit" [ngClass]="{'is-invalid':isFormSubmitted &&
+                                      rf.unit.errors}" />
+                  <div *ngIf="isFormSubmitted && rf.unit.errors" class="invalid-feedback">
+                    <div *ngIf="rf.unit.errors.required">Unit is required</div>
+                  </div>
                 </div>
-              </div>
-              
-              <div class="form-group">
-                <label for="productMRP">Cost per unit</label>
-                <input type="number" class="form-control" formControlName="costPerUnit" [ngClass]="{'is-invalid':isFormSubmitted &&
-                                    rf.costPerUnit.errors}" />
-                <div *ngIf="isFormSubmitted && rf.costPerUnit.errors" class="invalid-feedback">
-                  <div *ngIf="rf.costPerUnit.errors.required">Cost per Unit is required</div>
+                
+                <div class="form-group">
+                  <label for="productMRP">Cost per unit</label>
+                  <input type="number" class="form-control" formControlName="costPerUnit" [ngClass]="{'is-invalid':isFormSubmitted &&
+                                      rf.costPerUnit.errors}" />
+                  <div *ngIf="isFormSubmitted && rf.costPerUnit.errors" class="invalid-feedback">
+                    <div *ngIf="rf.costPerUnit.errors.required">Cost per Unit is required</div>
+                  </div>
                 </div>
-              </div>
-              
-              <div class="form-group">
-                <label for="exampleFormControlSelect1">Sales Type</label>
-                <select class="form-control" formControlName="sellType" id="exampleFormControlSelect1">
-                  <option [value]=true>
-                    Sell Type
-                  </option>
-                  <option [value]=false>
-                    Buy Type
-                  </option>
+                
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Sales Type</label>
+                  <select class="form-control" formControlName="sellType" id="exampleFormControlSelect1">
+                    <option [value]=true>
+                      Sell Type
+                    </option>
+                    <option [value]=false>
+                      Buy Type
+                    </option>
 
-                </select>
-                <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
-                  <div *ngIf="rf.product.errors.required">Sales Type is
-                    required</div>
+                  </select>
+                  <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
+                    <div *ngIf="rf.product.errors.required">Sales Type is
+                      required</div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="form-group checkbox">
-                <label for="productMRP">Self Delivery</label>
-                <input type="checkbox" class="form-control" formControlName="selfDelivery" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('selfDelivery').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('selfDelivery').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('selfDelivery').errors.required">Self Delivery</div>
+                <div class="form-group checkbox">
+                  <label for="productMRP">Self Delivery</label>
+                  <input type="checkbox" class="form-control" formControlName="selfDelivery" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('selfDelivery').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('selfDelivery').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('selfDelivery').errors.required">Self Delivery</div>
+                  </div>
+                </div>  
+                
+                <div class="form-group">
+                  <label for="productMRP">Delivery Date</label>
+                  <input type="date" class="form-control" formControlName="deliveryDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('deliveryDate').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('deliveryDate').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('deliveryDate').errors.required">Delivery Date</div>
+                  </div>
+                </div>  
+                
+                
+                <div class="form-group">
+                  <label for="productMRP">Shipping Cost</label>
+                  <input type="number" class="form-control" formControlName="shipCost" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('shipCost').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('shipCost').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('shipCost').errors.required">Shipping Cost</div>
+                  </div>
+                </div>  
+                
+                
+                <div class="form-group">
+                  <label for="productMRP">Harvest/Expected Date</label>
+                  <input type="date" class="form-control" formControlName="expectedDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('expectedDate').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('expectedDate').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('expectedDate').errors.required">Harvest/Expected Date</div>
+                  </div>
+                </div>  
+                
+                <div class="form-group">
+                  <button class="btn btn-primary" (click)="addNewOrder(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)" *ngIf="add_order">Add New</button>
+                  <button class="btn btn-primary" (click)="updateOrder()" *ngIf="edit_order">Update</button>
                 </div>
-              </div>  
-              
-              <div class="form-group">
-                <label for="productMRP">Delivery Date</label>
-                <input type="date" class="form-control" formControlName="deliveryDate" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('deliveryDate').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('deliveryDate').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('deliveryDate').errors.required">Delivery Date</div>
-                </div>
-              </div>  
-              
-              
-              <div class="form-group">
-                <label for="productMRP">Shipping Cost</label>
-                <input type="number" class="form-control" formControlName="shipCost" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('shipCost').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('shipCost').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('shipCost').errors.required">Shipping Cost</div>
-                </div>
-              </div>  
-              
-              
-              <div class="form-group">
-                <label for="productMRP">Harvest/Expected Date</label>
-                <input type="date" class="form-control" formControlName="expectedDate" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('expectedDate').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('expectedDate').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('expectedDate').errors.required">Harvest/Expected Date</div>
-                </div>
-              </div>  
-              
-              <div class="form-group">
-                <button class="btn btn-primary" (click)="addNewOrder(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)" *ngIf="add_order">Add New</button>
-                <button class="btn btn-primary" (click)="updateOrder()" *ngIf="edit_order">Update</button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -201,108 +205,109 @@
   </div>
 </div>
 
-
 <!-- Modal for add and edit bid  -->
-<div class="modal fade" id="addEditBidModal" tabindex="-1" role="dialog" aria-labelledby="addEditUserTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{{popup_header}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <dl class="row">
-          <dt class="col-sm-3">Orderer</dt>
-          <dd class="col-sm-9">{{ (single_order_data?.orderer.length>6)? (single_order_data?.orderer | slice:0:12)+'...':(single_order_data?.orderer) }}</dd>
-        
-          <dt class="col-sm-3">Order Date</dt>
-          <dd class="col-sm-9">{{single_order_data?.dateCreated}}</dd>
-        
-          <dt class="col-sm-3">Product</dt>
-          <dd class="col-sm-9">{{single_order_data?.product.name}}</dd>
-        
-          <dt class="col-sm-3">Quantity</dt>
-          <dd class="col-sm-9">{{single_order_data?.quantity}} ({{single_order_data?.unit}})</dd>
+<div class="container-fluid">
+  <div class="modal fade" id="addEditBidModal" tabindex="-1" role="dialog" aria-labelledby="addEditUserTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{popup_header}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <dl class="row">
+            <dt class="col-sm-3">Orderer</dt>
+            <dd class="col-sm-9">{{ (single_order_data?.orderer.length>6)? (single_order_data?.orderer | slice:0:12)+'...':(single_order_data?.orderer) }}</dd>
           
-          <dt class="col-sm-3">Cost per {{single_order_data?.unit}}</dt>
-          <dd class="col-sm-9">{{single_order_data?.costPerUnit}}</dd>
-
-          <dl *ngIf="single_order_data?.sellType; else elseBlock">
+            <dt class="col-sm-3">Order Date</dt>
+            <dd class="col-sm-9">{{single_order_data?.dateCreated}}</dd>
           
-              <dt class="col-sm-3">Sales Type</dt>
-              <dd class="col-sm-9">Sell</dd>
-              
-              <dt class="col-sm-3">Shippable</dt>
-              <dd class="col-sm-9">{{single_order_data?.selfDelivery}}</dd>
+            <dt class="col-sm-3">Product</dt>
+            <dd class="col-sm-9">{{single_order_data?.product.name}}</dd>
+          
+            <dt class="col-sm-3">Quantity</dt>
+            <dd class="col-sm-9">{{single_order_data?.quantity}} ({{single_order_data?.unit}})</dd>
+            
+            <dt class="col-sm-3">Cost per {{single_order_data?.unit}}</dt>
+            <dd class="col-sm-9">{{single_order_data?.costPerUnit}}</dd>
 
-              <dl *ngIf="single_order_data?.selfDelivery">
-                  <dt class="col-sm-3">Shipping Cost</dt>
-                  <dd class="col-sm-9">{{single_order_data?.shipCost}}</dd>
-                  
-                  <dt class="col-sm-3">Delivery Date</dt>
-                  <dd class="col-sm-9">{{single_order_data?.deliveryDate}}</dd>
-              </dl>
-
-              <dt class="col-sm-3">Harvest Date</dt>
-              <dd class="col-sm-9">{{single_order_data?.expectedDate}}</dd>
+            <dl *ngIf="single_order_data?.sellType; else elseBlock">
+            
+                <dt class="col-sm-3">Sales Type</dt>
+                <dd class="col-sm-9">Sell</dd>
                 
-            </dl>
-          <ng-template #elseBlock>
-              <dt class="col-sm-3">Sales Type</dt>
-              <dd class="col-sm-9">Buy</dd>
-              <div *ngIf="single_order_data?.selfDelivery">
-                  <dt class="col-sm-3">Pickable</dt>
-                  <dd class="col-sm-9">{{single_order_data?.selfDelivery}}</dd>
-              </div>
-              <dt class="col-sm-3">Expected Date</dt>
-              <dd class="col-sm-9">{{single_order_data?.expectedDate}}</dd>                   
-          </ng-template>
-        </dl>
-        
-        <dl class="row">
-          <dt class="col-sm-3">Total Cost</dt>
-          <dd class="col-sm-9">{{addEditBidForm.get('biddingPrice').value * addEditBidForm.get('bidQuantity').value}}</dd>
-        </dl>
-        <div class="row">
-          <div class="col-md-10 offset-md-1">
-            <form [formGroup]="addEditBidForm">
+                <dt class="col-sm-3">Shippable</dt>
+                <dd class="col-sm-9">{{single_order_data?.selfDelivery}}</dd>
 
-              <div class="form-group">
-                <label for="productMRP">Bidding Price per {{single_order_data?.unit.toUpperCase()}}</label>
-                <input type="number" class="form-control" formControlName="biddingPrice" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('biddingPrice').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('biddingPrice').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('biddingPrice').errors.required">Bidding Price</div>
-                </div>
-              </div>
+                <dl *ngIf="single_order_data?.selfDelivery">
+                    <dt class="col-sm-3">Shipping Cost</dt>
+                    <dd class="col-sm-9">{{single_order_data?.shipCost}}</dd>
+                    
+                    <dt class="col-sm-3">Delivery Date</dt>
+                    <dd class="col-sm-9">{{single_order_data?.deliveryDate}}</dd>
+                </dl>
 
-              <div class="form-group">
-                <label for="productMRP">Bid Quantity</label>
-                <input type="number" class="form-control" formControlName="bidQuantity" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('bidQuantity').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('bidQuantity').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('bidQuantity').errors.required">Bid Quantity</div>
+                <dt class="col-sm-3">Harvest Date</dt>
+                <dd class="col-sm-9">{{single_order_data?.expectedDate}}</dd>
+                  
+              </dl>
+            <ng-template #elseBlock>
+                <dt class="col-sm-3">Sales Type</dt>
+                <dd class="col-sm-9">Buy</dd>
+                <div *ngIf="single_order_data?.selfDelivery">
+                    <dt class="col-sm-3">Pickable</dt>
+                    <dd class="col-sm-9">{{single_order_data?.selfDelivery}}</dd>
                 </div>
-              </div>
-             
-              <div class="form-group">
-                <label for="productMRP">Maximum Reaction Time</label>
-                <input type="date" class="form-control" formControlName="maxReactionTime" [ngClass]="{'is-invalid':isFormSubmitted &&
-                      addEditBidForm.get('maxReactionTime').errors}" />
-                <div *ngIf="isFormSubmitted && addEditBidForm.get('maxReactionTime').errors" class="invalid-feedback">
-                  <div *ngIf="addEditBidForm.get('maxReactionTime').errors.required">Maximum Reaction Time is required</div>
+                <dt class="col-sm-3">Expected Date</dt>
+                <dd class="col-sm-9">{{single_order_data?.expectedDate}}</dd>                   
+            </ng-template>
+          </dl>
+          
+          <dl class="row">
+            <dt class="col-sm-3">Total Cost</dt>
+            <dd class="col-sm-9">{{addEditBidForm.get('biddingPrice').value * addEditBidForm.get('bidQuantity').value}}</dd>
+          </dl>
+          <div class="row">
+            <div class="col-md-10 offset-md-1">
+              <form [formGroup]="addEditBidForm">
+
+                <div class="form-group">
+                  <label for="productMRP">Bidding Price per {{single_order_data?.unit.toUpperCase()}}</label>
+                  <input type="number" class="form-control" formControlName="biddingPrice" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('biddingPrice').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('biddingPrice').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('biddingPrice').errors.required">Bidding Price</div>
+                  </div>
                 </div>
-              </div>  
+
+                <div class="form-group">
+                  <label for="productMRP">Bid Quantity</label>
+                  <input type="number" class="form-control" formControlName="bidQuantity" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('bidQuantity').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('bidQuantity').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('bidQuantity').errors.required">Bid Quantity</div>
+                  </div>
+                </div>
               
-              <div class="form-group">
-                <button class="btn btn-primary" *ngIf="isBidCreate" (click)="addNewBid(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)">Add New Bid</button>
-                <button class="btn btn-primary" *ngIf="!isBidCreate">Update</button>
-                <button class="btn btn-danger" *ngIf="!isBidCreate" (click)="deleteBid()">Delete</button>
-              </div>
-            </form>
+                <div class="form-group">
+                  <label for="productMRP">Maximum Reaction Time</label>
+                  <input type="date" class="form-control" formControlName="maxReactionTime" [ngClass]="{'is-invalid':isFormSubmitted &&
+                        addEditBidForm.get('maxReactionTime').errors}" />
+                  <div *ngIf="isFormSubmitted && addEditBidForm.get('maxReactionTime').errors" class="invalid-feedback">
+                    <div *ngIf="addEditBidForm.get('maxReactionTime').errors.required">Maximum Reaction Time is required</div>
+                  </div>
+                </div>  
+                
+                <div class="form-group">
+                  <button class="btn btn-primary" *ngIf="isBidCreate" (click)="addNewBid(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)">Add New Bid</button>
+                  <button class="btn btn-primary" *ngIf="!isBidCreate">Update</button>
+                  <button class="btn btn-danger" *ngIf="!isBidCreate" (click)="deleteOrderBid()">Delete</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

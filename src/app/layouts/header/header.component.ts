@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HelperService } from './../../services/helper.service';
+import * as $ from 'jquery'
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,14 @@ export class HeaderComponent {
     this.helperService.isLoggedIn.subscribe((res) => {
       this.logged_in = !!res;
     });
+  }
+
+  ngOnInit(): void {
+    $(function(){
+      $(".btn-toggle-menu").click(function() {
+          $("#wrapper").toggleClass("toggled");
+      });
+    })
   }
 
   ngDoCheck() {

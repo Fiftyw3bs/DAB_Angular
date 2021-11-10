@@ -2,12 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { environment } from 'src/environments/environment';
-import { IWallet } from '../../model/wallet';
-import { IContract } from '../../model/contract';
-import { IToken } from '../../model/token';
-import { OrdersService } from './../../services/orders.service';
-import { BidsService } from './../../services/bids.service';
-import { ToastrService } from 'ngx-toastr';
+import { IWallet } from '../model/wallet';
+import { IContract } from '../model/contract';
+import { IToken } from '../model/token';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +13,7 @@ export class ContractsService {
   public contract_url = environment.contract_url + '/api/contract/';
   public wallet_url = environment.contract_url + '/wallet/create';
 
-  constructor(
-    protected apiService: ApiService,
-    protected orderService: OrdersService,
-    protected bidsService: BidsService,
-    protected toastr: ToastrService
-  ) {}
+  constructor(private apiService: ApiService) {}
 
   public createInstance(contract: string, wallet_id: string): Promise<IContract> {
     var pay_load = { "caID": contract
@@ -32,10 +24,6 @@ export class ContractsService {
 
   public getAllInstances(wallet_id: number): Observable<Array<IContract>> {
     return this.apiService.get(this.contract_url + "instances/wallet/" + wallet_id)
-  }
-
-  protected capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   public gen_wallet(wallet_data: any): Observable<IWallet> {
@@ -57,12 +45,13 @@ export class ContractsService {
     return this.apiService.post(this.contract_url + 'instance/' + this.stripquotes(JSON.parse(JSON.stringify(contract_instance_id)).unContractInstanceId) + "/endpoint/" + action + "-" + contract, entity).toPromise()
   }
   
-  public async get_thread_token(contract: IContract): Promise<IToken> {
-    var tt: IToken;
-    alert("Processing...")
+  public async get_thread_token(contract: IContract): any {
+    var tt: any;
     await this.status(contract).then(
       retVal => {
-        tt = retVal.cicCurrentState.observableState;
+        // tt = JSON.parse(retVal).cicCurrentState;
+        console.log(retVal.cicCurrentState)
+        alert()
       },
       (error) => {
         console.log("Something went wrong", error)

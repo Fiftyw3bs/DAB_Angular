@@ -1,87 +1,125 @@
 import { Injectable } from '@angular/core';
+import { IToken } from '../../model/token';
+import { IOrder } from '../../model/order';
+import { IBid, Status } from '../../model/orderBid';
 import { ContractsService } from './contract.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OrderbidService extends ContractsService {
+export class OrderBidService extends ContractsService {
+  private contr: string = "orderBid";
 
   super() {
   }
-
   
-  private toJSON(value: any, wallet_pkh: string, threadtoken: any) : any {
+  private toJSON(order: IOrder, value: any, wallet_pkh: string, threadtoken: any) : any {
     var sell_type: boolean;
-    if (value.sellType == "true") {
-      sell_type = true;
-    } else {
+    if (order.sellType == true) {
       sell_type = false;
+    } else {
+      sell_type = true;
     }
-    var order = {
-        "gopQuantity": value.quantity,
-        "gopToken":  threadtoken,
-        "gopUnit": value.unit,
+    var orderbid = {
+    "gobpBidder": {
+        "getPubKeyHash": wallet_pkh
+    },
+    "gobpCostPerUnit": value.biddingPrice,
+    "gobpQuantity": value.bidQuantity,
+    "gobpToken": threadtoken,
+    "gobpOrder": 
+    {
+        "gopQuantity": order.quantity,
+        "gopToken":  order.orderTT,
+        "gopUnit": order.unit,
         "gopOwner": {
-            "getPubKeyHash": wallet_pkh
+            "getPubKeyHash": order.orderer
         },
         "gopProduct": {
-            "unTokenName": JSON.parse(value.product).name
+            "unTokenName": JSON.parse(JSON.stringify(order.product)).name
         },
         "gopAcceptedCurrSymbol": {
             "unCurrencySymbol": ""
         },
-        "gopCostPerUnit": value.costPerUnit,
+        "gopCostPerUnit": order.costPerUnit,
         "gopAcceptedTokenName": {
             "unTokenName": ""
         },
         "gopType": 
         {
             "stpSellType": sell_type,
-            "stpSelfDelivery": value.selfDelivery,
-            "stpShipCost": value.shipCost,
-            "stpExpectedDate": new Date(value.expectedDate).getTime(),
-            "stpDeliveryDate": new Date(value.deliveryDate).getTime()
+            "stpSelfDelivery": order.selfDelivery,
+            "stpShipCost": order.shipCost,
+            "stpExpectedDate": new Date(order.expectedDate).getTime(),
+            "stpDeliveryDate": new Date(order.deliveryDate).getTime()
         },
         "gopAction": "a5",
+      },
+      "gobpType": 
+      {
+          "stpSellType": !sell_type,
+          "stpSelfDelivery": value.selfDelivery,
+          "stpShipCost": value.shipCost,
+          "stpExpectedDate": new Date(value.expectedDate).getTime(),
+          "stpDeliveryDate": new Date(value.deliveryDate).getTime()
+        },
+      "gobpMaxReactionTime": new Date(value.maxReactionTime).getTime(),
+      "gobpAction": "",
     };
 
-    return order;
+    return orderbid;
   }
 
-  public async create(value: any, wallet_id: string, wallet_pkh: any) {
+  public async create(order: IOrder, value: any, wallet_id: string, wallet_pkh: any) {
     
+    let stat: string = "PENDING";
+
+    let bidStatus: Status = stat as Status;
+
     var reqData = {
-      product: JSON.parse(value.product).name,
-      sellType: value.sellType,
+      order: order,
+      bidder: wallet_pkh,
+      biddingPrice: value.biddingPrice,
+      bidQuantity: value.bidQuantity,
+      maxReactionTime: value.maxReactionTime,
+      bidDate: new Date(),
+
+      sellType: !order.sellType,
       selfDelivery: value.selfDelivery,
       shipCost: value.shipCost,
       expectedDate: value.expectedDate,
       deliveryDate: value.deliveryDate,
-      quantity: value.quantity,
-      unit: value.unit,
-      costPerUnit: value.costPerUnit,
-      dateCreated: new Date(),
-      orderer: wallet_pkh,
-      tt: null
-    };
 
-    Object.assign(reqData, { status: 'PENDING' });
-    var contr: string = "order";
+      status: bidStatus,
+      
+      orderBidTT: null
+    };
     
-    return await this.createInstance(this.capitalizeFirstLetter(contr), wallet_id).then(
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_id).then(
       (contract) => {
-        const order = this.toJSON(value, wallet_pkh, null);
-        return this.send_request(order, contr, contract, "create").then(
+        const orderBid = this.toJSON(order, value, wallet_pkh, null);
+        return this.send_request(orderBid, this.contr.toLowerCase(), contract, "create").then(
           (response: JSON) => {
             this.get_thread_token(contract).then(
               (token: IToken) => {
-                reqData.tt = token
-                this.orderService.addNewOrder(reqData).subscribe(
+                reqData.orderBidTT = token
+                this.bidsService.addNewBid(reqData).subscribe(
                   (data) => {
-                    console.log('Order sent', data)
+                    order.bids = reqData.bidQuantity;
+                    order.bidder = wallet_pkh;
+                    this.orderService
+                      .updateOrder(order.id, order)
+                      .subscribe(
+                        (data: Array<IOrder>) => {
+                          order = undefined;
+                        },
+                        (err) => {
+                          this.toastr.error('Some Error Occured!', err);
+                        }
+                      );
                   },
                   (error) => {
-                    console.log('Could not create Order', error)
+                    console.log('Could not create OrderBid', error)
                   }
                 )
               },
@@ -96,7 +134,7 @@ export class OrderbidService extends ContractsService {
         );      
     },
     (err) => {
-      this.toastr.error('Some Error Occured!', 'FAILED!');
+      this.toastr.error('Some Error Occured!', err);
     }
     );
   }

@@ -17,5 +17,5 @@ export interface IOrder {
   status?: 'ACCEPTED' | 'PENDING' | 'CANCELLED';
   bids?: number;
   bidder?: string;
-  tt?: any
+  orderTT?: any
 }

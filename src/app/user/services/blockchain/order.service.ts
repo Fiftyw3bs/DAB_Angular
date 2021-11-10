@@ -50,7 +50,7 @@ export class OrderService extends ContractsService {
   public async create(value: any, wallet_id: string, wallet_pkh: any) {
     
     var reqData = {
-      product: JSON.parse(value.product).name,
+      product: JSON.parse(value.product),
       sellType: value.sellType,
       selfDelivery: value.selfDelivery,
       shipCost: value.shipCost,
@@ -61,7 +61,7 @@ export class OrderService extends ContractsService {
       costPerUnit: value.costPerUnit,
       dateCreated: new Date(),
       orderer: wallet_pkh,
-      tt: null
+      orderTT: null
     };
 
     Object.assign(reqData, { status: 'PENDING' });
@@ -74,7 +74,7 @@ export class OrderService extends ContractsService {
           (response: JSON) => {
             this.get_thread_token(contract).then(
               (token: IToken) => {
-                reqData.tt = token
+                reqData.orderTT = token
                 this.orderService.addNewOrder(reqData).subscribe(
                   (data) => {
                     console.log('Order sent', data)

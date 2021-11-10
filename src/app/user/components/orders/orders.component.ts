@@ -1,4 +1,4 @@
-import { IBid } from './../../model/bid.d';
+import { IBid } from './../../model/orderBid.d';
 import { HelperService } from './../../../services/helper.service';
 import { ProductService } from './../../../admin/services/product.service';
 import { ContractsService } from './../../../user/services/blockchain/contract.service';
@@ -12,6 +12,7 @@ import { BidsService } from '../../services/bids.service';
 import { ContractsComponent } from '../contract/contracts.component';
 import { IToken } from '../../model/token';
 import { OrderService } from '../../services/blockchain/order.service';
+import { OrderBidService } from '../../services/blockchain/orderbid.service';
 declare var jQuery: any;
 
 @Component({
@@ -32,6 +33,8 @@ export class OrdersComponent implements OnInit {
     orderer: [{ value: '' }, Validators.required],
     orderStatus: [{ value: '' }, Validators.required],
     orderBids: [{ value: '' }, Validators.required],
+    unit: [{ value: '' }, Validators.required],
+    costPerUnit: [{ value: '' }, Validators.required],
     biddingPrice: [{ value: '' }, Validators.required],
     bidQuantity: [{ value: '' }, Validators.required],
     status: [{ value: '' }, Validators.required],
@@ -40,6 +43,7 @@ export class OrdersComponent implements OnInit {
     shipCost: [{ value: '' }, Validators.required],
     expectedDate: [{ value: '' }, Validators.required],
     deliveryDate: [{ value: '' }, Validators.required],
+    maxReactionTime: [{ value: '' }, Validators.required],
   });
   public isFormSubmitted: boolean; //for form validation
   public popup_header: string;
@@ -47,13 +51,14 @@ export class OrdersComponent implements OnInit {
   public add_order: boolean;
   public edit_order: boolean;
   public products: Array<IProduct>;
-  private single_order_data: IOrder;
+  public single_order_data: IOrder;
   private single_bid_data: IBid;
 
   constructor(
     private formBuilder: FormBuilder,
     private orderService: OrdersService,
     private blockchainOrderService: OrderService,
+    private blockchainOrderBidService: OrderBidService,
     private toastr: ToastrService,
     private productService: ProductService,
     public helperService: HelperService,
@@ -65,7 +70,7 @@ export class OrdersComponent implements OnInit {
   ngOnInit() {
     this.addEditOrderForm = this.formBuilder.group({
       product: ['', Validators.required],
-      quantity: [''],
+      quantity: ['', Validators.required],
       sellType: [{ value: '' }, Validators.required],
       selfDelivery: [{ value: '' }, Validators.required],
       shipCost: [{ value: '' }, Validators.required],
@@ -245,6 +250,7 @@ export class OrdersComponent implements OnInit {
             orderBids: order.bids,
             biddingPrice: data.biddingPrice,
             bidQuantity: data.bidQuantity,
+            maxReactionTime: data.maxReactionTime,
             status: data.status,
             sellType: data.sellType,
             selfDelivery: data.selfDelivery,
@@ -267,70 +273,35 @@ export class OrdersComponent implements OnInit {
         dateCreated: order.dateCreated,
         orderer: order.orderer,
         orderStatus: order.status,
-        sellType: false,
-        selfDelivery: false,
-        shipCost: 0,
-        expectedDate: Date.now(),
-        deliveryDate: Date.now(),
+        unit: order.unit,
+        costPerUnit: order.costPerUnit,
+        sellType: order.sellType,
+        selfDelivery: order.selfDelivery,
+        shipCost: order.shipCost,
+        expectedDate: order.expectedDate,
+        deliveryDate: order.deliveryDate,
         orderBids: 0,
         biddingPrice: 0,
         bidQuantity: 0,
         status: 'PENDING',
+        maxReactionTime: 0,
       });
     }
   }
 
-  public addNewBid() {
+  public async addNewBid(wallet_id: string) {
     this.isFormSubmitted = true;
     if (this.addEditBidForm.invalid) {
       return;
     }
     const value = this.addEditBidForm.value;
-    const reqData = {
-      order: {
-        product: this.single_order_data.product,
-        quantity: value.quantity,
-        dateCreated: value.dateCreated,
-        orderer: value.orderer,
-        orderStatus: value.orderStatus,
-        orderBids: value.orderBids,
-        id: this.single_order_data.id,
-        sellType: this.single_order_data.sellType,
-        selfDelivery: this.single_order_data.selfDelivery,
-        shipCost: this.single_order_data.shipCost,
-        expectedDate: this.single_order_data.expectedDate,
-        deliveryDate: this.single_order_data.deliveryDate,
-        unit: this.single_order_data.unit,
-        costPerUnit: this.single_order_data.costPerUnit,
-      },
-      sellType: value.sellType,
-      selfDelivery: value.selfDelivery,
-      shipCost: value.shipCost,
-      expectedDate: value.expectedDate,
-      deliveryDate: value.deliveryDate,
-      bidder: this.helperService.isLoggedIn.value.email,
-      biddingPrice: value.biddingPrice,
-      bidQuantity: value.bidQuantity,
-      bidDate: new Date(),
-      status: value.status,
-    };
-    this.bidsService.addNewBid(reqData).subscribe(
-      (data) => {
-        this.single_order_data.bids = reqData.bidQuantity;
-        this.single_order_data.bidder = this.helperService.isLoggedIn.value.id;
-        this.orderService
-          .updateOrder(this.single_order_data.id, this.single_order_data)
-          .subscribe(
-            (data: Array<IOrder>) => {
-              this.single_order_data = undefined;
-            },
-            (err) => {
-              this.toastr.error('Some Error Occured!', 'FAILED!');
-            }
-          );
-      },
-      (err) => {
-        this.toastr.error('Some Error Occured!', 'FAILED!');
+
+    var wallet_pkh = JSON.parse(JSON.stringify(this.helperService.isLoggedIn.value.wallet)).wiPubKeyHash.getPubKeyHash;
+
+    await this.blockchainOrderBidService.create(this.single_order_data, value, wallet_id, wallet_pkh).then(
+      (ret) => {
+        jQuery('#addEditOrderModal').modal('toggle');
+        this.getAllOrders();
       }
     );
   }

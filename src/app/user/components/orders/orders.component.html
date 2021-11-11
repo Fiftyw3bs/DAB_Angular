@@ -1,6 +1,6 @@
 <br>
 <div class="container-fluid">
-  <div class="row">
+  <div class="row" *ngIf="ordersListTitleIsVisible">
     <div class="col-md-10">
       <strong>All Order List</strong>
     </div>
@@ -25,7 +25,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order_data of all_order_data; let i= index">
+      <tr *ngFor="let order_data of all_order_data; let i= index" (click)="viewOrderPopup(order_data.id)" data-toggle="modal"
+      data-target="#addEditBidModal" >
         <td>{{order_data.product.name}}</td>
         <td>{{order_data.dateCreated | date}} </td>
         <td>{{order_data.bids}}</td>
@@ -34,43 +35,43 @@
           <span class="sim-pointer" (click)="updateStatus(order_data,
                 'ACCEPTED')">
             <i class="fa fa-check-circle" style="color: green;
-                    font-size: 40px;"></i>
+                    font-size: 20px;"></i>
           </span>
           &nbsp;&nbsp;&nbsp;
           <span class="sim-pointer" (click)="updateStatus(order_data,
                 'REJECTED')">
             <i class="fa fa-times-circle" style="color: red;
-                    font-size: 40px;"></i>
+                    font-size: 20px;"></i>
           </span>
         </td>
         <td>{{order_data.status}}</td>
         <td>
-          <span *ngIf="order_data.orderer === helperService.isLoggedIn.value.email && !!order_data.bids">
+          <span *ngIf="order_data.orderer === wallet_pkh && !!order_data.bids">
             <span class="sim-pointer" (click)="updateBidStatus(order_data,
                 'ACCEPTED')">
               <i class="fa fa-check-circle" style="color: green;
-                    font-size: 40px;"></i>
+                    font-size: 20px;"></i>
             </span>
-            &nbsp;&nbsp;&nbsp;
+            &nbsp;
             <span class="sim-pointer" (click)="updateBidStatus(order_data,
                 'REJECTED')">
               <i class="fa fa-times-circle" style="color: red;
-                    font-size: 40px;"></i>
+                    font-size: 20px;"></i>
             </span>
           </span>
         </td>
         <td>
           <span
-            *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === helperService.isLoggedIn.value.email"
+            *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === wallet_pkh"
             class="sim-pointer cursor" (click)="editOrderPopup(order_data.id)" data-toggle="modal"
             data-target="#addEditOrderModal"><i class="fa fa-pencil-square-o " aria-hidden="true"></i></span>
-          &nbsp;&nbsp;&nbsp;
+          &nbsp;
           <span
-            *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === helperService.isLoggedIn.value.email"
+            *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === wallet_pkh"
             class="sim-pointer cursor" (click)="deleteOrder(order_data.id)"><i class="fa
                           fa-trash" aria-hidden="true"></i>
           </span>
-          <span class="cursor link" *ngIf="order_data.orderer !== helperService.isLoggedIn.value.email &&
+          <span class="cursor link" *ngIf="order_data.orderer !== wallet_pkh &&
           !helperService.isLoggedIn.value.admin" (click)="openBidDialog(order_data)" data-toggle="modal"
             data-target="#addEditBidModal">Bid</span>
         </td>
@@ -94,7 +95,7 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-10 offset-md-1">
-              <form [formGroup]="addEditOrderForm">
+              <form [formGroup]="addEditOrderForm" *ngIf="addEditOrderForm">
                 <div class="form-group">
                   <label for="exampleFormControlSelect1">Select Product</label>
                   <select class="form-control" formControlName="product" id="exampleFormControlSelect1">
@@ -219,63 +220,50 @@
         </div>
         <div class="modal-body">
           <dl class="row">
-            <dt class="col-sm-3">Orderer</dt>
-            <dd class="col-sm-9">{{ (single_order_data?.orderer.length>6)? (single_order_data?.orderer | slice:0:12)+'...':(single_order_data?.orderer) }}</dd>
+            <dt class="col-sm-5">Orderer</dt>
+            <dd class="col-sm-7">{{ (single_order_data?.orderer.length>6)? (single_order_data?.orderer | slice:0:20)+'...':(single_order_data?.orderer) }}</dd>
           
-            <dt class="col-sm-3">Order Date</dt>
-            <dd class="col-sm-9">{{single_order_data?.dateCreated}}</dd>
+            <dt class="col-sm-5">Order Date</dt>
+            <dd class="col-sm-7">{{single_order_data?.dateCreated | date}}</dd>
           
-            <dt class="col-sm-3">Product</dt>
-            <dd class="col-sm-9">{{single_order_data?.product.name}}</dd>
+            <dt class="col-sm-5">Product {{single_order_data?.sellType ? "for Sale" : "to Buy"}}</dt>
+            <dd class="col-sm-7">{{single_order_data?.product.name}}</dd>
           
-            <dt class="col-sm-3">Quantity</dt>
-            <dd class="col-sm-9">{{single_order_data?.quantity}} ({{single_order_data?.unit}})</dd>
+            <dt class="col-sm-5">Quantity</dt>
+            <dd class="col-sm-7">{{single_order_data?.quantity}} ({{single_order_data?.unit | titlecase}})</dd>
             
-            <dt class="col-sm-3">Cost per {{single_order_data?.unit}}</dt>
-            <dd class="col-sm-9">{{single_order_data?.costPerUnit}}</dd>
+            <dt class="col-sm-5">Cost per {{single_order_data?.unit | titlecase}}</dt>
+            <dd class="col-sm-7">{{single_order_data?.costPerUnit}}</dd>
 
-            <dl *ngIf="single_order_data?.sellType; else elseBlock">
+            <dt class="col-sm-5" *ngIf="single_order_data?.sellType">Harvest Date</dt>
+            <dt class="col-sm-5" *ngIf="!single_order_data?.sellType">Expected Date</dt>
+            <dd class="col-sm-7" *ngIf="single_order_data?.sellType">{{single_order_data?.expectedDate | date}}</dd>
+
+            <dt class="col-sm-5" *ngIf="single_order_data?.sellType">Shippable</dt>
+            <dt class="col-sm-5" *ngIf="!single_order_data?.sellType">Pickupable</dt>
+            <dd class="col-sm-7">{{single_order_data?.selfDelivery ? "Yes" : "No"}}</dd>
+
+            <dt class="col-sm-5" *ngIf="single_order_data?.selfDelivery && single_order_data?.sellType">Shipping Cost</dt>
+            <dd class="col-sm-7" *ngIf="single_order_data?.selfDelivery && single_order_data?.sellType">{{single_order_data?.shipCost}}</dd>
             
-                <dt class="col-sm-3">Sales Type</dt>
-                <dd class="col-sm-9">Sell</dd>
-                
-                <dt class="col-sm-3">Shippable</dt>
-                <dd class="col-sm-9">{{single_order_data?.selfDelivery}}</dd>
+            <dt class="col-sm-5" *ngIf="single_order_data?.selfDelivery && single_order_data?.sellType">Delivery Date</dt>
+            <dd class="col-sm-7" *ngIf="single_order_data?.selfDelivery && single_order_data?.sellType">{{single_order_data?.deliveryDate | date}}</dd>
 
-                <dl *ngIf="single_order_data?.selfDelivery">
-                    <dt class="col-sm-3">Shipping Cost</dt>
-                    <dd class="col-sm-9">{{single_order_data?.shipCost}}</dd>
-                    
-                    <dt class="col-sm-3">Delivery Date</dt>
-                    <dd class="col-sm-9">{{single_order_data?.deliveryDate}}</dd>
-                </dl>
-
-                <dt class="col-sm-3">Harvest Date</dt>
-                <dd class="col-sm-9">{{single_order_data?.expectedDate}}</dd>
-                  
-              </dl>
-            <ng-template #elseBlock>
-                <dt class="col-sm-3">Sales Type</dt>
-                <dd class="col-sm-9">Buy</dd>
-                <div *ngIf="single_order_data?.selfDelivery">
-                    <dt class="col-sm-3">Pickable</dt>
-                    <dd class="col-sm-9">{{single_order_data?.selfDelivery}}</dd>
-                </div>
-                <dt class="col-sm-3">Expected Date</dt>
-                <dd class="col-sm-9">{{single_order_data?.expectedDate}}</dd>                   
-            </ng-template>
           </dl>
           
-          <dl class="row">
-            <dt class="col-sm-3">Total Cost</dt>
-            <dd class="col-sm-9">{{addEditBidForm.get('biddingPrice').value * addEditBidForm.get('bidQuantity').value}}</dd>
+          <dl class="row" *ngIf="single_order_data?.orderer !== wallet_pkh">
+            <dt class="col-sm-5">Total Bid Cost</dt>
+            <dd class="col-sm-7">{{addEditBidForm.get('biddingPrice').value * addEditBidForm.get('bidQuantity').value}}</dd>
           </dl>
-          <div class="row">
+
+          <hr />
+
+          <div class="row jumbotron" *ngIf="single_order_data?.orderer !== wallet_pkh; else elseBlock">
             <div class="col-md-10 offset-md-1">
               <form [formGroup]="addEditBidForm">
 
                 <div class="form-group">
-                  <label for="productMRP">Bidding Price per {{single_order_data?.unit.toUpperCase()}}</label>
+                  <label for="productMRP">Bidding Price per {{single_order_data?.unit | titlecase}}</label>
                   <input type="number" class="form-control" formControlName="biddingPrice" [ngClass]="{'is-invalid':isFormSubmitted &&
                         addEditBidForm.get('biddingPrice').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('biddingPrice').errors" class="invalid-feedback">
@@ -302,13 +290,45 @@
                 </div>  
                 
                 <div class="form-group">
-                  <button class="btn btn-primary" *ngIf="isBidCreate" (click)="addNewBid(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)">Add New Bid</button>
+                  <button class="btn btn-primary" *ngIf="isBidCreate" (click)="addNewBid(wallet_pkh)">Add New Bid</button>
                   <button class="btn btn-primary" *ngIf="!isBidCreate">Update</button>
                   <button class="btn btn-danger" *ngIf="!isBidCreate" (click)="deleteOrderBid()">Delete</button>
                 </div>
               </form>
             </div>
           </div>
+          <ng-template #elseBlock>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Bidder</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Cost per Unit</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let bid_data of all_bid_data; let i= index">
+                  <td>{{ (bid_data.bidder.length>6)? (bid_data.bidder | slice:0:6)+'...':(bid_data.bidder) }}</td>
+                  <td>{{bid_data.bidQuantity}} </td>
+                  <td>{{bid_data.biddingPrice}}</td>
+                  <td>{{bid_data.status}}</td>
+                  <td>
+                    <span class="sim-pointer" (click)="acceptOrderBid(bid_data)">
+                      <i class="fa fa-check-circle" style="color: green;
+                            font-size: 20px;"></i>
+                    </span>
+                    &nbsp;
+                    <span class="sim-pointer" (click)="rejectOrderBid(bid_data)">
+                      <i class="fa fa-times-circle" style="color: red;
+                            font-size: 20px;"></i>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-template>
         </div>
       </div>
     </div>

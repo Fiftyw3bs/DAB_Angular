@@ -33,6 +33,10 @@
           <a class="nav-link sim-pointer cursor" routerLink="/transactions">Transactions</a>
         </li>
 
+        <li *ngIf="isUser">
+          <a class="nav-link sim-pointer cursor" routerLink="/wallet">Wallet</a>
+        </li>
+
         <li *ngIf="!isUser">
           <a class="nav-link sim-pointer cursor" routerLink="/admin/dashboard">Dashboard</a>
         </li>

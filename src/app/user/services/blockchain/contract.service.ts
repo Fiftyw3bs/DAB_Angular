@@ -14,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ContractsService {
   public contract_url = environment.contract_url + '/api/contract/';
-  public wallet_url = environment.contract_url + '/wallet/create';
+  public wallet_url = environment.contract_url + '/wallet/';
 
   constructor(
     protected apiService: ApiService,
@@ -39,7 +39,31 @@ export class ContractsService {
   }
 
   public gen_wallet(wallet_data: any): Observable<IWallet> {
-    return this.apiService.post(this.wallet_url, wallet_data);
+    return this.apiService.post(this.wallet_url + "create", wallet_data);
+  }
+
+  public wallet_balance(wallet_id: number) : Array<IToken> {
+    var tokens = new Array<IToken>();
+
+    this.apiService.get(this.wallet_url + wallet_id + "/total-funds").subscribe(
+      (retVal: string) => {
+        // JSON.parse(retVal).getValue.forEach(x => {
+        //   x.forEach(y => {
+        //     var token = new IToken();
+        //     token.currSymbol = y.unCurrencySymbol;
+        //     y.forEach(z => {
+        //       z.forEach(elem => {
+        //         token.tokens[elem.unTokenName] = elem[0]
+        //       });
+        //     });
+        //     token.tokens[''] = y.
+        //     tokens.push(y.unCurrencySymbol)
+        //   });
+        // });
+      }
+    );
+
+    return tokens;
   }
 
   public async status(contract: IContract): Promise<any> {

@@ -3,8 +3,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { SigninSignupComponent } from '../components/signin-signup/signin-signup.component';
 import { UserGuard } from 'src/app/user.guard';
-import { ProductsComponent } from '../components/products/products.component';
 import { OrdersComponent } from '../components/orders/orders.component';
+import { TransactionsComponent } from '../components/transactions/transactions.component';
+import { WalletComponent } from '../components/wallet/wallet.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,8 @@ const routes: Routes = [
       // { path: 'dashboard', component: UserDashboardComponent },
       { path: 'profile', component: UserProfileComponent },
       { path: 'market', component: OrdersComponent },
+      { path: 'transactions', component: TransactionsComponent },
+      { path: 'wallet', component: WalletComponent },
     ],
   },
   { path: 'login', component: SigninSignupComponent },

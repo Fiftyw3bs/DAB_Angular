@@ -16,4 +16,4 @@ export interface IBid {
   maxReactionTime: Date
 }
 
-export type Status = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN';
+export type Status = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PICKED_UP';

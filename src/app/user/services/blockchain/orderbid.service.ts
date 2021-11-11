@@ -13,13 +13,18 @@ export class OrderBidService extends ContractsService {
   super() {
   }
   
-  private toJSON(order: IOrder, value: any, wallet_pkh: string, threadtoken: any) : any {
+  private toJSON(order: IOrder, value: any, wallet_pkh: any, threadtoken: any) : any {
     var sell_type: boolean;
     if (order.sellType == true) {
       sell_type = false;
     } else {
       sell_type = true;
     }
+
+    if (!wallet_pkh) {
+      wallet_pkh = value.bidder
+    }
+
     var orderbid = {
     "gobpBidder": {
         "getPubKeyHash": wallet_pkh
@@ -68,6 +73,87 @@ export class OrderBidService extends ContractsService {
     };
 
     return orderbid;
+  }
+
+  public async cancel(value: IBid, wallet_id: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_id).then(
+      (contract) => {
+        const orderBid = this.toJSON(value.order, value, null, value.orderBidTT);
+        return this.send_request(orderBid, this.contr.toLowerCase(), contract, "cancel").then(
+          (response: JSON) => {
+            this.bidsService.deleteOrderBid(value.id).subscribe(
+              (data) => {
+                this.orderService.updateOrderBid(value.order.id, {
+                  bids: 0,
+                  bidder: undefined,
+                });
+                console.log('Cancelled successfully', data);
+              },
+              (err) => {
+                this.toastr.error('Some Error Occured!', 'FAILED!');
+              }
+            );
+          }
+        );
+      }
+    );
+  }
+
+  public async accept(value: IBid, wallet_id: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_id).then(
+      (contract) => {
+        const orderBid = this.toJSON(value.order, value, null, value.orderBidTT);
+        return this.send_request(orderBid, this.contr.toLowerCase(), contract, "accept").then(
+          (response: JSON) => {
+            this.bidsService.updateBidStatus(value.order.id, {
+              status: 'ACCEPTED' as Status,
+            });
+            console.log('Bid accepted')
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async pickup(value: IBid, wallet_id: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_id).then(
+      (contract) => {
+        const orderBid = this.toJSON(value.order, value, null, value.orderBidTT);
+        return this.send_request(orderBid, this.contr.toLowerCase(), contract, "pickup").then(
+          (response: JSON) => {
+            this.bidsService.updateBidStatus(value.order.id, {
+              status: 'PICKED_UP' as Status,
+            });
+            console.log('Product picked up');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async reject(value: IBid, wallet_id: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_id).then(
+      (contract) => {
+        const orderBid = this.toJSON(value.order, value, null, value.orderBidTT);
+        return this.send_request(orderBid, this.contr.toLowerCase(), contract, "reject").then(
+          (response: JSON) => {
+            this.bidsService.updateBidStatus(value.order.id, {
+              status: 'REJECTED' as Status,
+            });
+            console.log('Bid rejected');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
   }
 
   public async create(order: IOrder, value: any, wallet_id: string, wallet_pkh: any) {

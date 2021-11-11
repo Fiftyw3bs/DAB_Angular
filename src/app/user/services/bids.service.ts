@@ -31,7 +31,7 @@ export class BidsService {
     return this.apiService.get(this.bid_url + id);
   }
 
-  public deleteBid(id: string): Observable<any> {
+  public deleteOrderBid(id: string): Observable<any> {
     return this.apiService.delete(this.bid_url + id);
   }
 }

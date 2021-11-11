@@ -8,6 +8,8 @@ import { CommonModule } from '@angular/common';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ProductsComponent } from './components/products/products.component';
 import { OrdersComponent } from './components/orders/orders.component';
+import { TransactionsComponent } from './components/transactions/transactions.component';
+import { WalletComponent } from './components/wallet/wallet.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,8 @@ import { OrdersComponent } from './components/orders/orders.component';
     UserProfileComponent,
     ProductsComponent,
     OrdersComponent,
+    TransactionsComponent,
+    WalletComponent,
   ],
   imports: [UserRoutingModule, CommonModule, FormsModule, ReactiveFormsModule],
 })

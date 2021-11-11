@@ -9,8 +9,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { BidsService } from '../../services/bids.service';
-import { ContractsComponent } from '../contract/contracts.component';
-import { IToken } from '../../model/token';
 import { OrderService } from '../../services/blockchain/order.service';
 import { OrderBidService } from '../../services/blockchain/orderbid.service';
 declare var jQuery: any;
@@ -21,9 +19,10 @@ declare var jQuery: any;
   styleUrls: ['./orders.component.scss'],
 })
 export class OrdersComponent implements OnInit {
-  @ViewChild("app-contracts") contract_component: ContractsComponent;
 
+  public ordersListTitleIsVisible: boolean;
   public all_order_data: Array<IOrder>;
+  public all_bid_data: Array<IBid>;
   public JSON: any;
   public addEditOrderForm: FormGroup;
   public addEditBidForm: FormGroup = this.formBuilder.group({
@@ -53,6 +52,8 @@ export class OrdersComponent implements OnInit {
   public products: Array<IProduct>;
   public single_order_data: IOrder;
   private single_bid_data: IBid;
+  public wallet_pkh: string;
+  public wallet_id: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,9 +66,12 @@ export class OrdersComponent implements OnInit {
     private bidsService: BidsService
   ) {
     this.JSON = JSON;
+    this.wallet_pkh = JSON.parse(JSON.stringify(this.helperService.isLoggedIn.value.wallet)).wiPubKeyHash.getPubKeyHash;
+    this.wallet_id = JSON.parse(JSON.stringify(this.helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId;
   }
 
   ngOnInit() {
+    this.ordersListTitleIsVisible = true;
     this.addEditOrderForm = this.formBuilder.group({
       product: ['', Validators.required],
       quantity: ['', Validators.required],
@@ -87,16 +91,41 @@ export class OrdersComponent implements OnInit {
     return this.addEditOrderForm.controls;
   }
 
-  private getAllOrders() {
+  protected getAllOrders(owner: string = null) {
     this.orderService.getAllOrders().subscribe(
       (data: Array<IOrder>) => {
-        this.all_order_data = data;
+        if (owner) {
+          data.forEach(order => {
+            if (order.orderer == owner) {
+              this.all_order_data.push(order)
+            }
+          });
+        } else {
+          this.all_order_data = data;
+        }
       },
       (error) => {
         console.log('My error', error);
       }
     );
   }
+  
+  protected getAllOrderBids(order: IOrder) {
+    this.bidsService.getAllBids().subscribe(
+      (data: Array<IBid>) => {
+        this.all_bid_data = new Array<IBid>();
+        data.forEach(bid => {
+          if (bid.order.orderer == this.wallet_pkh && bid.order.id == order.id) {
+            this.all_bid_data.push(bid)
+          }
+        });
+      },
+      (error) => {
+        console.log('Problem fetching OrderBids', error);
+      }
+    );
+  }
+
   private getAllProducts() {
     this.productService.getAllProducts().subscribe(
       (data: Array<IProduct>) => {
@@ -122,9 +151,7 @@ export class OrdersComponent implements OnInit {
     }
     const value = this.addEditOrderForm.value;
 
-    var wallet_pkh = JSON.parse(JSON.stringify(this.helperService.isLoggedIn.value.wallet)).wiPubKeyHash.getPubKeyHash;
-
-    await this.blockchainOrderService.create(value, wallet_id, wallet_pkh).then(
+    await this.blockchainOrderService.create(value, this.wallet_id, this.wallet_pkh).then(
       (ret) => {
         jQuery('#addEditOrderModal').modal('toggle');
         this.getAllOrders();
@@ -150,6 +177,16 @@ export class OrdersComponent implements OnInit {
         expectedDate: value.expectedDate,
         deliveryDate: value.deliveryDate,
       });
+    });
+  }
+
+  public viewOrderPopup(id: string) {
+    this.add_order = false;
+    this.edit_order = false;
+    this.popup_header = 'Order Details';
+    this.orderService.singleOrder(id).subscribe((data: IOrder) => {
+      this.single_order_data = data;
+      this.getAllOrderBids(data);
     });
   }
 
@@ -201,28 +238,7 @@ export class OrdersComponent implements OnInit {
     if (r === true) {
       this.orderService.deleteOrder(id).subscribe(
         (data) => {
-          console.log('deleted successfully', data);
-          this.getAllOrders();
-        },
-        (err) => {
-          this.toastr.error('Some Error Occured!', 'FAILED!');
-        }
-      );
-    } else {
-    }
-  }
-  public deleteBid() {
-    let r = confirm(
-      'Do you want to delete the order  ID: ' + this.single_bid_data.id + '?'
-    );
-    if (r === true) {
-      this.bidsService.deleteBid(this.single_bid_data.id).subscribe(
-        (data) => {
-          this.orderService.updateOrderBid(this.single_bid_data.order.id, {
-            bids: 0,
-            bidder: undefined,
-          });
-          console.log('deleted successfully', data);
+          this.toastr.success('Order deleted', 'Success!');
           this.getAllOrders();
         },
         (err) => {
@@ -233,8 +249,63 @@ export class OrdersComponent implements OnInit {
     }
   }
 
+  public async deleteOrderBid(bid: IBid) {
+    let r = confirm(
+      'Do you want to delete the order  ID: ' + bid.id + '?'
+    );
+    if (r === true) {
+      return await this.blockchainOrderBidService.cancel(bid, this.wallet_id).then(
+        (ret) => {
+          this.toastr.success('Bid deleted', 'Success!');
+          jQuery('#addEditBidModal').modal('toggle');
+        }
+      );
+    } else {
+    }
+  }
+
+  public async acceptOrderBid(bid: IBid) {
+    let r = confirm(
+      'Do you want to accept the OrderBid ID: ' + bid.id + '?'
+    );
+    if (r === true) {
+      return await this.blockchainOrderBidService.accept(bid, this.wallet_id).then(
+        (ret) => {
+          this.toastr.success('Bid accepted', 'Success!');
+          jQuery('#addEditBidModal').modal('toggle');
+        }
+      );
+    } else {
+    }
+  }
+
+  public async rejectOrderBid(bid: IBid) {
+    let r = confirm(
+      'Do you want to reject the OrderBid ID: ' + bid.id + '?'
+    );
+    if (r === true) {
+      return await this.blockchainOrderBidService.reject(bid, this.wallet_id).then(
+        (ret) => {
+          this.toastr.success('Bid rejected', 'Success!');
+          jQuery('#addEditBidModal').modal('toggle');
+        }
+      );
+    } else {
+    }
+  }
+
+  public async pickupOrderBid(bid: IBid) {
+    return await this.blockchainOrderBidService.pickup(bid, this.wallet_id).then(
+      (ret) => {
+        this.toastr.success('Product picked up', 'Success!');
+        jQuery('#addEditBidModal').modal('toggle');
+      }
+    );
+  }
+
   public openBidDialog(order: IOrder) {
     if (order.bidder) {
+      this.getAllOrderBids(order);
       this.bidsService.singleBid(order.bidder).subscribe(
         (data) => {
           this.popup_header = 'Update Bid';
@@ -260,7 +331,7 @@ export class OrdersComponent implements OnInit {
           });
         },
         (err) => {
-          alert('Some Error Occured');
+          alert('Some Error Occured!!!');
         }
       );
     } else {
@@ -296,11 +367,9 @@ export class OrdersComponent implements OnInit {
     }
     const value = this.addEditBidForm.value;
 
-    var wallet_pkh = JSON.parse(JSON.stringify(this.helperService.isLoggedIn.value.wallet)).wiPubKeyHash.getPubKeyHash;
-
-    await this.blockchainOrderBidService.create(this.single_order_data, value, wallet_id, wallet_pkh).then(
+    await this.blockchainOrderBidService.create(this.single_order_data, value, this.wallet_id, this.wallet_pkh).then(
       (ret) => {
-        jQuery('#addEditOrderModal').modal('toggle');
+        jQuery('#addEditBidModal').modal('toggle');
         this.getAllOrders();
       }
     );

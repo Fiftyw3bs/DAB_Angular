@@ -10,6 +10,7 @@ import { ProductsComponent } from './components/products/products.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { WalletComponent } from './components/wallet/wallet.component';
+import { ShipbidsComponent } from './components/shipbids/shipbids.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { WalletComponent } from './components/wallet/wallet.component';
     OrdersComponent,
     TransactionsComponent,
     WalletComponent,
+    ShipbidsComponent,
   ],
   imports: [UserRoutingModule, CommonModule, FormsModule, ReactiveFormsModule],
 })

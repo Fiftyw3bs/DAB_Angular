@@ -1,4 +1,4 @@
 export class IToken {
   currSymbol: string;
-  tokens: {[key: string]: number}
+  name_balance: {[key: string]: number}
 }

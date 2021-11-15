@@ -5,8 +5,6 @@ import { environment } from 'src/environments/environment';
 import { IWallet } from '../../model/wallet';
 import { IContract } from '../../model/contract';
 import { IToken } from '../../model/token';
-import { OrdersService } from './../../services/orders.service';
-import { BidsService } from './../../services/bids.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
@@ -18,8 +16,6 @@ export class ContractsService {
 
   constructor(
     protected apiService: ApiService,
-    protected orderService: OrdersService,
-    protected bidsService: BidsService,
     protected toastr: ToastrService
   ) {}
 
@@ -42,28 +38,8 @@ export class ContractsService {
     return this.apiService.post(this.wallet_url + "create", wallet_data);
   }
 
-  public wallet_balance(wallet_id: number) : Array<IToken> {
-    var tokens = new Array<IToken>();
-
-    this.apiService.get(this.wallet_url + wallet_id + "/total-funds").subscribe(
-      (retVal: string) => {
-        // JSON.parse(retVal).getValue.forEach(x => {
-        //   x.forEach(y => {
-        //     var token = new IToken();
-        //     token.currSymbol = y.unCurrencySymbol;
-        //     y.forEach(z => {
-        //       z.forEach(elem => {
-        //         token.tokens[elem.unTokenName] = elem[0]
-        //       });
-        //     });
-        //     token.tokens[''] = y.
-        //     tokens.push(y.unCurrencySymbol)
-        //   });
-        // });
-      }
-    );
-
-    return tokens;
+  public wallet_balance(wallet_id: number) : Observable<any> {
+    return this.apiService.get(this.wallet_url + wallet_id + "/total-funds");
   }
 
   public async status(contract: IContract): Promise<any> {
@@ -83,7 +59,7 @@ export class ContractsService {
   
   public async get_thread_token(contract: IContract): Promise<IToken> {
     var tt: IToken;
-    alert("Processing...")
+    alert("Processing... Click OK and Wait!")
     await this.status(contract).then(
       retVal => {
         tt = retVal.cicCurrentState.observableState;

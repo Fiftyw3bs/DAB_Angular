@@ -14,7 +14,7 @@ export interface IOrder {
   shipCost: number,
   expectedDate: Date,
   deliveryDate?: Date,
-  status?: 'ACCEPTED' | 'PENDING' | 'CANCELLED';
+  status?: 'OPEN' | 'IN PROGRESS' | 'CANCELLED' | 'CLOSED' | 'COMPLETED';
   bids?: number;
   bidder?: string;
   orderTT?: any

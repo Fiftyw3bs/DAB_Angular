@@ -1,5 +1,5 @@
 import { IOrder } from './order.d';
-export interface IBid {
+export interface IOrderBid {
   id?: string;
   bidder: string;
   biddingPrice: number;
@@ -16,4 +16,4 @@ export interface IBid {
   maxReactionTime: Date
 }
 
-export type Status = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PICKED_UP';
+export type Status = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PICKED UP' | 'CANCELLED' | 'AWAITING PICKUP' | 'AWAITING DELIVERY' | 'DELIVERED' | 'COMPLETED';

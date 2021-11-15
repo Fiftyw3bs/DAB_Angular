@@ -1,4 +1,4 @@
-import { IOrderBid } from './../model/orderBid.d';
+import { IShipBid } from '../model/shipbid.d';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
@@ -7,31 +7,31 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class BidsService {
-  public bid_url = environment.db_url + '/bids/';
+export class ShipBidService {
+  public bid_url = environment.db_url + '/shipbids/';
 
   constructor(private apiService: ApiService) {}
 
-  public getAllBids(): Observable<Array<IOrderBid>> {
+  public getAll(): Observable<Array<IShipBid>> {
     return this.apiService.get(this.bid_url);
   }
 
-  public addNewBid(bid_data: IOrderBid): Observable<Array<IOrderBid>> {
+  public addNew(bid_data: IShipBid): Observable<Array<IShipBid>> {
     return this.apiService.post(this.bid_url, bid_data);
   }
 
-  public updateBid(id: string, bid_data: IOrderBid): Observable<Array<IOrderBid>> {
+  public update(id: string, bid_data: IShipBid): Observable<Array<IShipBid>> {
     return this.apiService.put(this.bid_url + id, bid_data);
   }
-  public updateBidStatus(id: string, bid_data: any): Observable<Array<IOrderBid>> {
+  public updateStatus(id: string, bid_data: any): Observable<Array<IShipBid>> {
     return this.apiService.patch(this.bid_url + id, bid_data);
   }
 
-  public singleBid(id: string): Observable<IOrderBid> {
+  public single(id: string): Observable<IShipBid> {
     return this.apiService.get(this.bid_url + id);
   }
 
-  public deleteOrderBid(id: string): Observable<any> {
+  public delete(id: string): Observable<any> {
     return this.apiService.delete(this.bid_url + id);
   }
 }

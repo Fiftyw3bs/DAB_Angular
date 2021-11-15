@@ -1,4 +1,4 @@
-import { IBid } from './../../model/orderBid.d';
+import { IOrderBid } from './../../model/orderBid.d';
 import { HelperService } from './../../../services/helper.service';
 import { ProductService } from './../../../admin/services/product.service';
 import { ContractsService } from './../../../user/services/blockchain/contract.service';
@@ -9,8 +9,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { BidsService } from '../../services/bids.service';
-import { OrderService } from '../../services/blockchain/order.service';
-import { OrderBidService } from '../../services/blockchain/orderbid.service';
+import { BC_OrderService } from '../../services/blockchain/order.service';
+import { BC_OrderBidService } from '../../services/blockchain/orderbid.service';
 declare var jQuery: any;
 
 @Component({
@@ -22,7 +22,7 @@ export class OrdersComponent implements OnInit {
 
   public ordersListTitleIsVisible: boolean;
   public all_order_data: Array<IOrder>;
-  public all_bid_data: Array<IBid>;
+  public all_bid_data: Array<IOrderBid>;
   public JSON: any;
   public addEditOrderForm: FormGroup;
   public addEditBidForm: FormGroup = this.formBuilder.group({
@@ -51,15 +51,20 @@ export class OrdersComponent implements OnInit {
   public edit_order: boolean;
   public products: Array<IProduct>;
   public single_order_data: IOrder;
-  private single_bid_data: IBid;
+  private single_bid_data: IOrderBid;
   public wallet_pkh: string;
   public wallet_id: string;
+  public isViewOrder: boolean = true;
+
+  public undoIsViewOrder() {
+    this.isViewOrder = false;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
     private orderService: OrdersService,
-    private blockchainOrderService: OrderService,
-    private blockchainOrderBidService: OrderBidService,
+    private blockchainOrderService: BC_OrderService,
+    private blockchainOrderBidService: BC_OrderBidService,
     private toastr: ToastrService,
     private productService: ProductService,
     public helperService: HelperService,
@@ -112,8 +117,8 @@ export class OrdersComponent implements OnInit {
   
   protected getAllOrderBids(order: IOrder) {
     this.bidsService.getAllBids().subscribe(
-      (data: Array<IBid>) => {
-        this.all_bid_data = new Array<IBid>();
+      (data: Array<IOrderBid>) => {
+        this.all_bid_data = new Array<IOrderBid>();
         data.forEach(bid => {
           if (bid.order.orderer == this.wallet_pkh && bid.order.id == order.id) {
             this.all_bid_data.push(bid)
@@ -183,6 +188,7 @@ export class OrdersComponent implements OnInit {
   public viewOrderPopup(id: string) {
     this.add_order = false;
     this.edit_order = false;
+    this.isViewOrder = false;
     this.popup_header = 'Order Details';
     this.orderService.singleOrder(id).subscribe((data: IOrder) => {
       this.single_order_data = data;
@@ -249,7 +255,7 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  public async deleteOrderBid(bid: IBid) {
+  public async deleteOrderBid(bid: IOrderBid) {
     let r = confirm(
       'Do you want to delete the order  ID: ' + bid.id + '?'
     );
@@ -264,7 +270,7 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  public async acceptOrderBid(bid: IBid) {
+  public async acceptOrderBid(bid: IOrderBid) {
     let r = confirm(
       'Do you want to accept the OrderBid ID: ' + bid.id + '?'
     );
@@ -279,7 +285,7 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  public async rejectOrderBid(bid: IBid) {
+  public async rejectOrderBid(bid: IOrderBid) {
     let r = confirm(
       'Do you want to reject the OrderBid ID: ' + bid.id + '?'
     );
@@ -294,7 +300,7 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  public async pickupOrderBid(bid: IBid) {
+  public async pickupOrderBid(bid: IOrderBid) {
     return await this.blockchainOrderBidService.pickup(bid, this.wallet_id).then(
       (ret) => {
         this.toastr.success('Product picked up', 'Success!');
@@ -304,63 +310,31 @@ export class OrdersComponent implements OnInit {
   }
 
   public openBidDialog(order: IOrder) {
-    if (order.bidder) {
-      this.getAllOrderBids(order);
-      this.bidsService.singleBid(order.bidder).subscribe(
-        (data) => {
-          this.popup_header = 'Update Bid';
-          this.single_bid_data = data;
-          this.isBidCreate = false;
-          this.single_order_data = order;
-          this.addEditBidForm.setValue({
-            product: order.product.name,
-            quantity: order.quantity,
-            dateCreated: order.dateCreated,
-            orderer: order.orderer,
-            orderStatus: order.status,
-            orderBids: order.bids,
-            biddingPrice: data.biddingPrice,
-            bidQuantity: data.bidQuantity,
-            maxReactionTime: data.maxReactionTime,
-            status: data.status,
-            sellType: data.sellType,
-            selfDelivery: data.selfDelivery,
-            shipCost: data.shipCost,
-            expectedDate: data.expectedDate,
-            deliveryDate: data.deliveryDate,
-          });
-        },
-        (err) => {
-          alert('Some Error Occured!!!');
-        }
-      );
-    } else {
-      this.popup_header = 'Create Bid';
-      this.isBidCreate = true;
-      this.single_order_data = order;
-      this.addEditBidForm.setValue({
-        product: order.product.name,
-        quantity: order.quantity,
-        dateCreated: order.dateCreated,
-        orderer: order.orderer,
-        orderStatus: order.status,
-        unit: order.unit,
-        costPerUnit: order.costPerUnit,
-        sellType: order.sellType,
-        selfDelivery: order.selfDelivery,
-        shipCost: order.shipCost,
-        expectedDate: order.expectedDate,
-        deliveryDate: order.deliveryDate,
-        orderBids: 0,
-        biddingPrice: 0,
-        bidQuantity: 0,
-        status: 'PENDING',
-        maxReactionTime: 0,
-      });
-    }
+    this.popup_header = 'Create Bid';
+    this.isBidCreate = true;
+    this.single_order_data = order;
+    this.addEditBidForm.setValue({
+      product: order.product.name,
+      quantity: order.quantity,
+      dateCreated: order.dateCreated,
+      orderer: order.orderer,
+      orderStatus: order.status,
+      unit: order.unit,
+      costPerUnit: order.costPerUnit,
+      sellType: order.sellType,
+      selfDelivery: order.selfDelivery,
+      shipCost: order.shipCost,
+      expectedDate: order.expectedDate,
+      deliveryDate: order.deliveryDate,
+      orderBids: 0,
+      biddingPrice: 0,
+      bidQuantity: 0,
+      status: 'PENDING',
+      maxReactionTime: 0,
+    });
   }
 
-  public async addNewBid(wallet_id: string) {
+  public async addNewBid() {
     this.isFormSubmitted = true;
     if (this.addEditBidForm.invalid) {
       return;

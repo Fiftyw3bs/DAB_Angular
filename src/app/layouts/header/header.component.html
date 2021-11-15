@@ -22,11 +22,15 @@
             </a>
         </li>
         <li *ngIf="isUser">
-          <a class="nav-link sim-pointer cursor" routerLink="/profile">Profile</a>
+          <a class="nav-link sim-pointer cursor" routerLink="/profile">
+            <i class="fa fa-user" style="font-size: 30px;"></i> Profile
+          </a>
         </li>
 
         <li *ngIf="isUser">
-          <a class="nav-link sim-pointer cursor" routerLink="/market">Market</a>
+          <a class="nav-link sim-pointer cursor" routerLink="/market">
+            <i class="fa fa-shopping-cart" style="font-size: 30px;" aria-hidden="true"></i> Market
+          </a>
         </li>
 
         <li *ngIf="isUser">
@@ -34,7 +38,7 @@
         </li>
 
         <li *ngIf="isUser">
-          <a class="nav-link sim-pointer cursor" routerLink="/wallet">Wallet</a>
+          <a class="nav-link sim-pointer cursor" routerLink="/tresor">Wallet</a>
         </li>
 
         <li *ngIf="!isUser">

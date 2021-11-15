@@ -1,15 +1,24 @@
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { ApiService } from 'src/app/services/api.service';
 import { IToken } from '../../model/token';
+import { OrdersService } from '../orders.service';
 import { ContractsService } from './contract.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OrderService extends ContractsService {
+export class BC_OrderService extends ContractsService {
 
-  super() { }
+  constructor(
+    protected orderService: OrdersService,
+    protected apiService: ApiService,
+    protected toastr: ToastrService
+  ) {
+    super(apiService, toastr);
+   }
 
-  private toJSON(value: any, wallet_pkh: string, threadtoken: any) : any {
+  public static toJSON(value: any, wallet_pkh: string, threadtoken: any) : any {
     var sell_type: boolean;
     if (value.sellType == "true") {
       sell_type = true;
@@ -19,7 +28,9 @@ export class OrderService extends ContractsService {
     var order = {
         "gopQuantity": value.quantity,
         "gopToken":  threadtoken,
-        "gopUnit": value.unit,
+        "gopUnit": {
+          "unTokenName": value.unit
+        },
         "gopOwner": {
             "getPubKeyHash": wallet_pkh
         },
@@ -64,12 +75,12 @@ export class OrderService extends ContractsService {
       orderTT: null
     };
 
-    Object.assign(reqData, { status: 'PENDING' });
+    Object.assign(reqData, { status: 'OPEN' });
     var contr: string = "order";
     
     return await this.createInstance(this.capitalizeFirstLetter(contr), wallet_id).then(
       (contract) => {
-        const order = this.toJSON(value, wallet_pkh, null);
+        const order = BC_OrderService.toJSON(value, wallet_pkh, null);
         return this.send_request(order, contr, contract, "create").then(
           (response: JSON) => {
             this.get_thread_token(contract).then(

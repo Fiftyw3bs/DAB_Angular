@@ -6,7 +6,7 @@
     </div>
     <div class="col-md-2">
       <button *ngIf="!helperService.isLoggedIn.value.admin" type="button" class="btn btn-dark float-right"
-        (click)="addOrderPopup()" data-toggle="modal" data-target="#addEditOrderModal">
+        (click)="addOrderPopup()" data-bs-toggle="modal" data-bs-target="#addEditOrderModal">
         Add New Order
       </button>
     </div>
@@ -20,13 +20,12 @@
         <th scope="col">Orderer</th>
         <th scope="col" *ngIf="helperService.isLoggedIn.value.admin">Accept/Pending/Reject</th>
         <th scope="col">Order Status</th>
-        <th scope="col">Bid Action</th>
         <th scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order_data of all_order_data; let i= index" (click)="viewOrderPopup(order_data.id)" data-toggle="modal"
-      data-target="#addEditBidModal" >
+      <tr *ngFor="let order_data of all_order_data; let i= index" (click)="viewOrderPopup(order_data.id)" data-bs-toggle="modal"
+      data-bs-target="#addEditBidModal" >
         <td>{{order_data.product.name}}</td>
         <td>{{order_data.dateCreated | date}} </td>
         <td>{{order_data.bids}}</td>
@@ -46,25 +45,10 @@
         </td>
         <td>{{order_data.status}}</td>
         <td>
-          <span *ngIf="order_data.orderer === wallet_pkh && !!order_data.bids">
-            <span class="sim-pointer" (click)="updateBidStatus(order_data,
-                'ACCEPTED')">
-              <i class="fa fa-check-circle" style="color: green;
-                    font-size: 20px;"></i>
-            </span>
-            &nbsp;
-            <span class="sim-pointer" (click)="updateBidStatus(order_data,
-                'REJECTED')">
-              <i class="fa fa-times-circle" style="color: red;
-                    font-size: 20px;"></i>
-            </span>
-          </span>
-        </td>
-        <td>
           <span
             *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === wallet_pkh"
-            class="sim-pointer cursor" (click)="editOrderPopup(order_data.id)" data-toggle="modal"
-            data-target="#addEditOrderModal"><i class="fa fa-pencil-square-o " aria-hidden="true"></i></span>
+            class="sim-pointer cursor" (click)="editOrderPopup(order_data.id)" data-bs-toggle="modal"
+            data-bs-target="#addEditOrderModal"><i class="fa fa-pencil-square-o " aria-hidden="true"></i></span>
           &nbsp;
           <span
             *ngIf="helperService.isLoggedIn.value.admin || order_data.orderer === wallet_pkh"
@@ -72,8 +56,8 @@
                           fa-trash" aria-hidden="true"></i>
           </span>
           <span class="cursor link" *ngIf="order_data.orderer !== wallet_pkh &&
-          !helperService.isLoggedIn.value.admin" (click)="openBidDialog(order_data)" data-toggle="modal"
-            data-target="#addEditBidModal">Bid</span>
+          !helperService.isLoggedIn.value.admin" (click)="openBidDialog(order_data)" data-bs-toggle="modal"
+            data-bs-target="#addEditBidModal">Bid</span>
         </td>
       </tr>
     </tbody>
@@ -88,7 +72,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">{{popup_header}}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -96,32 +80,30 @@
           <div class="row">
             <div class="col-md-10 offset-md-1">
               <form [formGroup]="addEditOrderForm" *ngIf="addEditOrderForm">
-                <div class="form-group">
-                  <label for="exampleFormControlSelect1">Select Product</label>
-                  <select class="form-control" formControlName="product" id="exampleFormControlSelect1">
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Product&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                  <select class="form-select" formControlName="product" id="exampleFormControlSelect1" aria-label="Product select">
                     <option *ngFor="let product of products" [value]="JSON.stringify(product) ">
                       {{product.name}}
                     </option>
-
                   </select>
                   <div *ngIf="isFormSubmitted && rf.product.errors" class="invalid-feedback">
-                    <div *ngIf="rf.product.errors.required">Name is
-                      required</div>
+                    <div *ngIf="rf.product.errors.required">Product is required</div>
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="productMRP">Quantity</label>
-                  <input type="number" class="form-control" formControlName="quantity" [ngClass]="{'is-invalid':isFormSubmitted &&
-                                      rf.quantity.errors}" />
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Quantity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                  <input type="number" class="form-control" aria-label="Quantity" aria-describedby="basic-addon1" formControlName="quantity" [ngClass]="{'is-invalid':isFormSubmitted &&
+                  rf.quantity.errors}" >
                   <div *ngIf="isFormSubmitted && rf.quantity.errors" class="invalid-feedback">
-                    <div *ngIf="rf.quantity.errors.required">Cost is
-                      required</div>
+                    <div *ngIf="rf.quantity.errors.required">Quantity is required</div>
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="productMRP">Unit</label>
+                
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Unit (e.g. Kg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                   <input type="text" class="form-control" formControlName="unit" [ngClass]="{'is-invalid':isFormSubmitted &&
                                       rf.unit.errors}" />
                   <div *ngIf="isFormSubmitted && rf.unit.errors" class="invalid-feedback">
@@ -129,8 +111,8 @@
                   </div>
                 </div>
                 
-                <div class="form-group">
-                  <label for="productMRP">Cost per unit</label>
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Cost per Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                   <input type="number" class="form-control" formControlName="costPerUnit" [ngClass]="{'is-invalid':isFormSubmitted &&
                                       rf.costPerUnit.errors}" />
                   <div *ngIf="isFormSubmitted && rf.costPerUnit.errors" class="invalid-feedback">
@@ -138,14 +120,14 @@
                   </div>
                 </div>
                 
-                <div class="form-group">
-                  <label for="exampleFormControlSelect1">Sales Type</label>
-                  <select class="form-control" formControlName="sellType" id="exampleFormControlSelect1">
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Sales Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                  <select class="form-control" placeholder="Sales Type" formControlName="sellType" id="exampleFormControlSelect1">
                     <option [value]=true>
-                      Sell Type
+                      Sell
                     </option>
                     <option [value]=false>
-                      Buy Type
+                      Buy
                     </option>
 
                   </select>
@@ -155,46 +137,46 @@
                   </div>
                 </div>
 
-                <div class="form-group checkbox">
-                  <label for="productMRP">Self Delivery</label>
-                  <input type="checkbox" class="form-control" formControlName="selfDelivery" [ngClass]="{'is-invalid':isFormSubmitted &&
-                        addEditBidForm.get('selfDelivery').errors}" />
+                <div class="input-group mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" formControlName="selfDelivery" [ngClass]="{'is-invalid':isFormSubmitted && addEditBidForm.get('selfDelivery').errors}">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      Self Delivery
+                    </label>
+                  </div>
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('selfDelivery').errors" class="invalid-feedback">
                     <div *ngIf="addEditBidForm.get('selfDelivery').errors.required">Self Delivery</div>
                   </div>
-                </div>  
-                
-                <div class="form-group">
-                  <label for="productMRP">Delivery Date</label>
-                  <input type="date" class="form-control" formControlName="deliveryDate" [ngClass]="{'is-invalid':isFormSubmitted &&
+                </div>
+
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Delivery Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                  <input type="date" class="form-control" placeholder="Delivery Date" formControlName="deliveryDate" [ngClass]="{'is-invalid':isFormSubmitted &&
                         addEditBidForm.get('deliveryDate').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('deliveryDate').errors" class="invalid-feedback">
                     <div *ngIf="addEditBidForm.get('deliveryDate').errors.required">Delivery Date</div>
                   </div>
-                </div>  
+                </div>
                 
-                
-                <div class="form-group">
-                  <label for="productMRP">Shipping Cost</label>
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Shipping Cost&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                   <input type="number" class="form-control" formControlName="shipCost" [ngClass]="{'is-invalid':isFormSubmitted &&
                         addEditBidForm.get('shipCost').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('shipCost').errors" class="invalid-feedback">
                     <div *ngIf="addEditBidForm.get('shipCost').errors.required">Shipping Cost</div>
                   </div>
-                </div>  
+                </div>
                 
-                
-                <div class="form-group">
-                  <label for="productMRP">Harvest/Expected Date</label>
-                  <input type="date" class="form-control" formControlName="expectedDate" [ngClass]="{'is-invalid':isFormSubmitted &&
-                        addEditBidForm.get('expectedDate').errors}" />
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Harvest/Expected Date</label>
+                  <input type="date" class="form-control" placeholder="Harvest/Expected Date" formControlName="expectedDate" [ngClass]="{'is-invalid':isFormSubmitted && addEditBidForm.get('expectedDate').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('expectedDate').errors" class="invalid-feedback">
                     <div *ngIf="addEditBidForm.get('expectedDate').errors.required">Harvest/Expected Date</div>
                   </div>
                 </div>  
-                
-                <div class="form-group">
-                  <button class="btn btn-primary" (click)="addNewOrder(JSON.parse(JSON.stringify(helperService.isLoggedIn.value.wallet)).wiWallet.getWalletId)" *ngIf="add_order">Add New</button>
+                <br />
+                <div class="input-group mb-3">
+                  <button class="btn btn-primary" (click)="addNewOrder(wallet_pkh)" *ngIf="add_order">Add New</button>
                   <button class="btn btn-primary" (click)="updateOrder()" *ngIf="edit_order">Update</button>
                 </div>
               </form>
@@ -214,7 +196,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">{{popup_header}}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -262,8 +244,8 @@
             <div class="col-md-10 offset-md-1">
               <form [formGroup]="addEditBidForm">
 
-                <div class="form-group">
-                  <label for="productMRP">Bidding Price per {{single_order_data?.unit | titlecase}}</label>
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Bidding Price per {{single_order_data?.unit | titlecase}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                   <input type="number" class="form-control" formControlName="biddingPrice" [ngClass]="{'is-invalid':isFormSubmitted &&
                         addEditBidForm.get('biddingPrice').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('biddingPrice').errors" class="invalid-feedback">
@@ -271,8 +253,8 @@
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="productMRP">Bid Quantity</label>
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Bid Quantity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                   <input type="number" class="form-control" formControlName="bidQuantity" [ngClass]="{'is-invalid':isFormSubmitted &&
                         addEditBidForm.get('bidQuantity').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('bidQuantity').errors" class="invalid-feedback">
@@ -280,8 +262,8 @@
                   </div>
                 </div>
               
-                <div class="form-group">
-                  <label for="productMRP">Maximum Reaction Time</label>
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01">Maximum Reaction Time</label>
                   <input type="date" class="form-control" formControlName="maxReactionTime" [ngClass]="{'is-invalid':isFormSubmitted &&
                         addEditBidForm.get('maxReactionTime').errors}" />
                   <div *ngIf="isFormSubmitted && addEditBidForm.get('maxReactionTime').errors" class="invalid-feedback">
@@ -289,18 +271,19 @@
                   </div>
                 </div>  
                 
-                <div class="form-group">
-                  <button class="btn btn-primary" *ngIf="isBidCreate" (click)="addNewBid(wallet_pkh)">Add New Bid</button>
-                  <button class="btn btn-primary" *ngIf="!isBidCreate">Update</button>
-                  <button class="btn btn-danger" *ngIf="!isBidCreate" (click)="deleteOrderBid()">Delete</button>
+                <div class="input-group mb-3">
+                  <button class="btn btn-primary" *ngIf="isBidCreate !! isViewOrder" (click)="addNewBid()">Send Bid</button>
+                  <button class="btn btn-primary" *ngIf="!isBidCreate && isOrderClicked">Update</button>
+                  <button class="btn btn-danger" *ngIf="!isBidCreate && isOrderClicked" (click)="deleteOrderBid()">Delete</button>
                 </div>
               </form>
             </div>
           </div>
           <ng-template #elseBlock>
-            <table class="table table-hover">
+            <table class="table table-hover" *ngIf="!isViewOrder">
               <thead>
                 <tr>
+                  <th scope="col">#</th>
                   <th scope="col">Bidder</th>
                   <th scope="col">Quantity</th>
                   <th scope="col">Cost per Unit</th>
@@ -310,7 +293,8 @@
               </thead>
               <tbody>
                 <tr *ngFor="let bid_data of all_bid_data; let i= index">
-                  <td>{{ (bid_data.bidder.length>6)? (bid_data.bidder | slice:0:6)+'...':(bid_data.bidder) }}</td>
+                  <td>bid_data.id</td>
+                  <td>{{ (bid_data.bidder.length>6)? (bid_data.bidder | slice:0:20)+'...':(bid_data.bidder) }}</td>
                   <td>{{bid_data.bidQuantity}} </td>
                   <td>{{bid_data.biddingPrice}}</td>
                   <td>{{bid_data.status}}</td>

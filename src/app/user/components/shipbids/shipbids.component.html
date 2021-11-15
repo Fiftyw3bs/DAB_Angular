@@ -1,0 +1,160 @@
+<br>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10">
+      <strong>Ship Bid List</strong>
+    </div>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Bidder</th>
+        <th scope="col">Date</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Cost</th>
+        <th scope="col">Ship Date</th>
+        <th scope="col">MRT</th>
+        <th scope="col">Status</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let shipbid_data of all_shipbid_data; let i= index" (click)="viewOrderPopup(shipbid_data.id)" data-bs-toggle="modal"
+      data-bs-target="#addEditShipBidModal" >
+        <td>{{shipbid_data.bidder}}</td>
+        <td>{{shipbid_data.dateCreated | date}} </td>
+        <td>{{shipbid_data.shipQuantity}}</td>
+        <td>{{shipbid_data.shipCost}}</td>
+        <td>{{shipbid_data.shipDate}}</td>
+        <td>{{shipbid_data.maxReactionTime}}</td>
+        <td>{{shipbid_data.status}}</td>
+        <td>
+          <span class="sim-pointer" (click)="accept(shipbid_data,
+                'ACCEPTED')">
+            <i class="fa fa-check-circle" style="color: green;
+                    font-size: 20px;"></i>
+          </span>
+          &nbsp;&nbsp;&nbsp;
+          <span class="sim-pointer" (click)="reject(shipbid_data,
+                'REJECTED')">
+            <i class="fa fa-times-circle" style="color: red;
+                    font-size: 20px;"></i>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal for add and edit bid  -->
+<div class="container-fluid">
+    <div class="modal fade" id="addEditShipBidModal" tabindex="-1" role="dialog" aria-labelledby="addEditUserTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{popup_header}}</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <dl class="row">
+              <dt class="col-sm-5">Bidder</dt>
+              <dd class="col-sm-7">{{ (single_shipbid_data?.orderer.length>6)? (single_shipbid_data?.orderer | slice:0:20)+'...':(single_shipbid_data?.orderer) }}</dd>
+            
+              <dt class="col-sm-5">Date Created</dt>
+              <dd class="col-sm-7">{{single_shipbid_data?.dateCreated | date}}</dd>
+            
+              <dt class="col-sm-5">Status</dt>
+              <dd class="col-sm-7">{{single_shipbid_data?.status}}</dd>
+            
+              <dt class="col-sm-5">Quantity</dt>
+              <dd class="col-sm-7">{{single_shipbid_data?.shipQuantity} ({{single_shipbid_data?.unit | titlecase}})</dd>
+              
+              <dt class="col-sm-5">Shipment Cost</dt>
+              <dd class="col-sm-7">{{single_shipbid_data?.shipCost/dd>
+              
+              <dt class="col-sm-5">Shipment Date</dt>
+              <dd class="col-sm-7">{{single_shipbid_data?.shipDate/dd>
+            </dl>
+            
+            <div class="row jumbotron" *ngIf="single_shipbid_data?.orderer !== wallet_pkh; else elseBlock">
+              <div class="col-md-10 offset-md-1">
+                <form [formGroup]="addEditBidForm">
+  
+                  <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01">Bidding Price per {{single_shipbid_data?.unit | titlecase}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="number" class="form-control" formControlName="biddingPrice" [ngClass]="{'is-invalid':isFormSubmitted &&
+                          addEditBidForm.get('biddingPrice').errors}" />
+                    <div *ngIf="isFormSubmitted && addEditBidForm.get('biddingPrice').errors" class="invalid-feedback">
+                      <div *ngIf="addEditBidForm.get('biddingPrice').errors.required">Bidding Price</div>
+                    </div>
+                  </div>
+  
+                  <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01">Bid Quantity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="number" class="form-control" formControlName="bidQuantity" [ngClass]="{'is-invalid':isFormSubmitted &&
+                          addEditBidForm.get('bidQuantity').errors}" />
+                    <div *ngIf="isFormSubmitted && addEditBidForm.get('bidQuantity').errors" class="invalid-feedback">
+                      <div *ngIf="addEditBidForm.get('bidQuantity').errors.required">Bid Quantity</div>
+                    </div>
+                  </div>
+                
+                  <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01">Maximum Reaction Time</label>
+                    <input type="date" class="form-control" formControlName="maxReactionTime" [ngClass]="{'is-invalid':isFormSubmitted &&
+                          addEditBidForm.get('maxReactionTime').errors}" />
+                    <div *ngIf="isFormSubmitted && addEditBidForm.get('maxReactionTime').errors" class="invalid-feedback">
+                      <div *ngIf="addEditBidForm.get('maxReactionTime').errors.required">Maximum Reaction Time is required</div>
+                    </div>
+                  </div>  
+                  
+                  <div class="input-group mb-3">
+                    <button class="btn btn-primary" *ngIf="isBidCreate !! isViewOrder" (click)="addNewBid()">Send Bid</button>
+                    <button class="btn btn-primary" *ngIf="!isBidCreate && isOrderClicked">Update</button>
+                    <button class="btn btn-danger" *ngIf="!isBidCreate && isOrderClicked" (click)="deleteOrderBid()">Delete</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <ng-template #elseBlock>
+              <table class="table table-hover" *ngIf="!isViewOrder">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Bidder</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Cost per Unit</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let bid_data of all_bid_data; let i= index">
+                    <td>bid_data.id</td>
+                    <td>{{ (bid_data.bidder.length>6)? (bid_data.bidder | slice:0:20)+'...':(bid_data.bidder) }}</td>
+                    <td>{{bid_data.bidQuantity}} </td>
+                    <td>{{bid_data.biddingPrice}}</td>
+                    <td>{{bid_data.status}}</td>
+                    <td>
+                      <span class="sim-pointer" (click)="acceptOrderBid(bid_data)">
+                        <i class="fa fa-check-circle" style="color: green;
+                              font-size: 20px;"></i>
+                      </span>
+                      &nbsp;
+                      <span class="sim-pointer" (click)="rejectOrderBid(bid_data)">
+                        <i class="fa fa-times-circle" style="color: red;
+                              font-size: 20px;"></i>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+  

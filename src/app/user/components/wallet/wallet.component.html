@@ -1,1 +1,23 @@
-<p>wallet works!</p>
+<div class="p-5 mb-4 bg-light rounded-3">
+  <div class="container-fluid py-5">
+    <div class="col-md-6 offset-md-3">
+      <h3 class="display-5 fw-bold">Wallet</h3>
+      <br />
+      <div class="accordion" id="accordionExample">
+        <div class="accordion-item" *ngFor="let token of balances; let i= index">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              {{wallet_pkh}}
+            </button>
+          </h2>
+          <div  *ngFor="let item of token.name_balance | keyvalue" id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <strong>Currency: </strong>{{item.key}} <br />
+              <strong>Balance: </strong>{{item.value}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

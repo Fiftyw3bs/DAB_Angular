@@ -23,9 +23,13 @@ export class BC_ShipBidService extends ContractsService {
     super(apiService, toastr);
   }
 
-  public static toJSON(orderBid: IOrderBid, order: IOrder, value: any, wallet_pkh: any, threadtoken: any) {
+  public static toJSON(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: any, threadtoken: any) {
 
     var ob = BC_OrderBidService.toJSON(order, orderBid, orderBid.bidder, orderBid.orderBidTT)
+
+    if (!threadtoken) {
+      threadtoken = value.shipBidTT;
+    }
 
     var shipBid = {
       "gsbpMaxReactionTime": value.maxReactionTime,
@@ -42,14 +46,14 @@ export class BC_ShipBidService extends ContractsService {
     return shipBid;
   }
   
-  public async create(order: IOrder, orderBid: IOrderBid, value: any, wallet_id: string, wallet_pkh: any) {
+  public async create(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_id: string, wallet_pkh: any) {
     
     var reqData = {
       bidder: wallet_pkh,
       dateCreated: new Date(),
       shipQuantity: value.shipQuantity,
       shipCost: value.shipCost,
-      shipDate: Date,
+      shipDate: value.shipDate,
       shipBidTT: null,
       maxReactionTime: value.maxReactionTime
     };
@@ -90,16 +94,111 @@ export class BC_ShipBidService extends ContractsService {
     );
   }
 
-  public async reject(value: IShipBid, wallet_id: string) {
-    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_id).then(
+  public async reject(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_pkh).then(
       (contract) => {
-        const orderBid = BC_OrderBidService.toJSON(value.order, value, null, value.orderBidTT);
-        return this.send_request(orderBid, this.contr.toLowerCase(), contract, "reject").then(
+        const shipBid = BC_ShipBidService.toJSON(orderBid, order, value, wallet_pkh, null);
+        return this.send_request(shipBid, this.contr.toLowerCase(), contract, "reject").then(
           (response: JSON) => {
-            this.shipBidService.update(value.id, {
+            this.shipBidService.updateStatus(value.id, {
               status: 'REJECTED' as SBStatus,
             });
             console.log('Bid rejected');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async accept(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_pkh).then(
+      (contract) => {
+        const shipBid = BC_ShipBidService.toJSON(orderBid, order, value, wallet_pkh, null);
+        return this.send_request(shipBid, this.contr.toLowerCase(), contract, "accept").then(
+          (response: JSON) => {
+            this.shipBidService.updateStatus(value.id, {
+              status: 'ACCEPTED' as SBStatus,
+            });
+            console.log('Bid accepted');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async pickup(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_pkh).then(
+      (contract) => {
+        const shipBid = BC_ShipBidService.toJSON(orderBid, order, value, wallet_pkh, null);
+        return this.send_request(shipBid, this.contr.toLowerCase(), contract, "pickup").then(
+          (response: JSON) => {
+            this.shipBidService.updateStatus(value.id, {
+              status: 'PICKED UP' as SBStatus,
+            });
+            console.log('Product pickedup');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async cancel(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_pkh).then(
+      (contract) => {
+        const shipBid = BC_ShipBidService.toJSON(orderBid, order, value, wallet_pkh, null);
+        return this.send_request(shipBid, this.contr.toLowerCase(), contract, "cancel").then(
+          (response: JSON) => {
+            this.shipBidService.updateStatus(value.id, {
+              status: 'CANCELLED' as SBStatus,
+            });
+            console.log('Bid cancelled');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async deliver(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_pkh).then(
+      (contract) => {
+        const shipBid = BC_ShipBidService.toJSON(orderBid, order, value, wallet_pkh, null);
+        return this.send_request(shipBid, this.contr.toLowerCase(), contract, "deliver").then(
+          (response: JSON) => {
+            this.shipBidService.updateStatus(value.id, {
+              status: 'DELIVERED' as SBStatus,
+            });
+            console.log('Product delivered');
+          },
+          error => {
+            console.log('Error', error)
+          }
+        );
+      }
+    );
+  }
+
+  public async claim(orderBid: IOrderBid, order: IOrder, value: IShipBid, wallet_pkh: string) {
+    return await this.createInstance(this.capitalizeFirstLetter(this.contr), wallet_pkh).then(
+      (contract) => {
+        const shipBid = BC_ShipBidService.toJSON(orderBid, order, value, wallet_pkh, null);
+        return this.send_request(shipBid, this.contr.toLowerCase(), contract, "claim").then(
+          (response: JSON) => {
+            this.shipBidService.updateStatus(value.id, {
+              status: 'COMPLETED' as SBStatus,
+            });
+            console.log('Shipment completed');
           },
           error => {
             console.log('Error', error)

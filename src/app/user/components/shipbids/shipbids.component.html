@@ -61,7 +61,7 @@
           <div class="modal-body">
             <dl class="row">
               <dt class="col-sm-5">Bidder</dt>
-              <dd class="col-sm-7">{{ (single_shipbid_data?.orderer.length>6)? (single_shipbid_data?.orderer | slice:0:20)+'...':(single_shipbid_data?.orderer) }}</dd>
+              <dd class="col-sm-7">{{ (single_shipbid_data?.bidder.length>6)? (single_shipbid_data?.bidder | slice:0:20)+'...':(single_shipbid_data?.bidder) }}</dd>
             
               <dt class="col-sm-5">Date Created</dt>
               <dd class="col-sm-7">{{single_shipbid_data?.dateCreated | date}}</dd>
@@ -70,7 +70,7 @@
               <dd class="col-sm-7">{{single_shipbid_data?.status}}</dd>
             
               <dt class="col-sm-5">Quantity</dt>
-              <dd class="col-sm-7">{{single_shipbid_data?.shipQuantity} ({{single_shipbid_data?.unit | titlecase}})</dd>
+              <dd class="col-sm-7">{{single_shipbid_data?.shipQuantity}}</dd>
               
               <dt class="col-sm-5">Shipment Cost</dt>
               <dd class="col-sm-7">{{single_shipbid_data?.shipCost/dd>
@@ -79,41 +79,41 @@
               <dd class="col-sm-7">{{single_shipbid_data?.shipDate/dd>
             </dl>
             
-            <div class="row jumbotron" *ngIf="single_shipbid_data?.orderer !== wallet_pkh; else elseBlock">
+            <div class="row jumbotron" *ngIf="single_shipbid_data?.bidder !== wallet_pkh; else elseBlock">
               <div class="col-md-10 offset-md-1">
-                <form [formGroup]="addEditBidForm">
+                <form [formGroup]="addEditShipBidForm">
   
                   <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupFile01">Bidding Price per {{single_shipbid_data?.unit | titlecase}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <input type="number" class="form-control" formControlName="biddingPrice" [ngClass]="{'is-invalid':isFormSubmitted &&
-                          addEditBidForm.get('biddingPrice').errors}" />
-                    <div *ngIf="isFormSubmitted && addEditBidForm.get('biddingPrice').errors" class="invalid-feedback">
-                      <div *ngIf="addEditBidForm.get('biddingPrice').errors.required">Bidding Price</div>
+                          addEditShipBidForm.get('biddingPrice').errors}" />
+                    <div *ngIf="isFormSubmitted && addEditShipBidForm.get('biddingPrice').errors" class="invalid-feedback">
+                      <div *ngIf="addEditShipBidForm.get('biddingPrice').errors.required">Bidding Price</div>
                     </div>
                   </div>
   
                   <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupFile01">Bid Quantity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <input type="number" class="form-control" formControlName="bidQuantity" [ngClass]="{'is-invalid':isFormSubmitted &&
-                          addEditBidForm.get('bidQuantity').errors}" />
-                    <div *ngIf="isFormSubmitted && addEditBidForm.get('bidQuantity').errors" class="invalid-feedback">
-                      <div *ngIf="addEditBidForm.get('bidQuantity').errors.required">Bid Quantity</div>
+                          addEditShipBidForm.get('bidQuantity').errors}" />
+                    <div *ngIf="isFormSubmitted && addEditShipBidForm.get('bidQuantity').errors" class="invalid-feedback">
+                      <div *ngIf="addEditShipBidForm.get('bidQuantity').errors.required">Bid Quantity</div>
                     </div>
                   </div>
                 
                   <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupFile01">Maximum Reaction Time</label>
                     <input type="date" class="form-control" formControlName="maxReactionTime" [ngClass]="{'is-invalid':isFormSubmitted &&
-                          addEditBidForm.get('maxReactionTime').errors}" />
-                    <div *ngIf="isFormSubmitted && addEditBidForm.get('maxReactionTime').errors" class="invalid-feedback">
-                      <div *ngIf="addEditBidForm.get('maxReactionTime').errors.required">Maximum Reaction Time is required</div>
+                          addEditShipBidForm.get('maxReactionTime').errors}" />
+                    <div *ngIf="isFormSubmitted && addEditShipBidForm.get('maxReactionTime').errors" class="invalid-feedback">
+                      <div *ngIf="addEditShipBidForm.get('maxReactionTime').errors.required">Maximum Reaction Time is required</div>
                     </div>
                   </div>  
                   
                   <div class="input-group mb-3">
                     <button class="btn btn-primary" *ngIf="isBidCreate !! isViewOrder" (click)="addNewBid()">Send Bid</button>
                     <button class="btn btn-primary" *ngIf="!isBidCreate && isOrderClicked">Update</button>
-                    <button class="btn btn-danger" *ngIf="!isBidCreate && isOrderClicked" (click)="deleteOrderBid()">Delete</button>
+                    <button class="btn btn-danger" *ngIf="!isBidCreate && isOrderClicked" (click)="deleteShipBid()">Delete</button>
                   </div>
                 </form>
               </div>
@@ -138,12 +138,12 @@
                     <td>{{bid_data.biddingPrice}}</td>
                     <td>{{bid_data.status}}</td>
                     <td>
-                      <span class="sim-pointer" (click)="acceptOrderBid(bid_data)">
+                      <span class="sim-pointer" (click)="acceptShipBid()">
                         <i class="fa fa-check-circle" style="color: green;
                               font-size: 20px;"></i>
                       </span>
                       &nbsp;
-                      <span class="sim-pointer" (click)="rejectOrderBid(bid_data)">
+                      <span class="sim-pointer" (click)="rejectShipBid()">
                         <i class="fa fa-times-circle" style="color: red;
                               font-size: 20px;"></i>
                       </span>

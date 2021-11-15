@@ -1,11 +1,10 @@
 import { IOrderBid } from './../../model/orderBid.d';
 import { HelperService } from './../../../services/helper.service';
 import { ProductService } from './../../../admin/services/product.service';
-import { ContractsService } from './../../../user/services/blockchain/contract.service';
 import { IProduct } from './../../../admin/models/product.d';
 import { OrdersService } from './../../services/orders.service';
 import { IOrder } from './../../model/order.d';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { BidsService } from '../../services/bids.service';

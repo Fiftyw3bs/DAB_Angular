@@ -3,7 +3,7 @@ export interface IShipBid {
   id?: string;
   bidder: string;
   dateCreated: Date;
-  status: SBStatus;
+  status?: SBStatus;
   shipQuantity: number;
   orderBid?: IOrderBid;
   shipCost: number;
